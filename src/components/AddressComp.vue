@@ -21,7 +21,7 @@
           v-for="address in addresses"
           :key="address.id"
         >
-          <td>{{ address.AddressID }}</td>
+          <td>{{ address.Id }}</td>
           <td>{{ address.City }}</td>
           <td>{{ address.PostIndex }}</td>
           <td>{{ address.Street }}</td>
@@ -47,7 +47,7 @@
             </button>
             <button
               type="button"
-              @click="deleteClick(address.AddressID)"
+              @click="deleteClick(address.Id)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -182,7 +182,7 @@ export default {
       if (confirm("Вы действительно хотите удалить адресс?")) {
         const response = await axios.delete(Variables.API_URL + this.name + "/" + addrID);
 
-        if (response.data === "Deleded successfully") {
+        if (response.data === "Deleted successfully") {
           this.addresses = await this.refreshData();
         }
         else {
@@ -193,7 +193,7 @@ export default {
 
     editClick(addr) {
       this.modalTitle = "Измененить адрес";
-      this.id = addr.AddressID;
+      this.id = addr.Id;
       this.city = addr.City;
       this.postIndex = addr.PostIndex;
       this.street = addr.Street;
@@ -209,7 +209,7 @@ export default {
         method: "put",
         url: Variables.API_URL + this.name,
         data: {
-          AddressID: this.id,
+          Id: this.id,
           City: this.city,
           PostIndex: this.postIndex,
           Street: this.street

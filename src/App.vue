@@ -1,75 +1,52 @@
 <template>
   <div id="app">
     <header>Welcome to the site!</header>
-    <div class="div-alig">
-      <p>Student information card</p>
-      <!-- <StudentComp />
-      <AddressComp /> -->
-      <nav class="navbar">
-        <ul class="navbar-nav">
-          <li class="nav-item m-1">
-            <RouterLink
-              class="btn"
-              to="/studinfo"
-            >
-              StudInfo
-            </RouterLink>
-          </li>
-          <li class="nav-item m-1">
-            <RouterLink
-              class="btn"
-              to="/student"
-            >
-              Student
-            </RouterLink>
-          </li>
-          <li class="nav-item m-1">
-            <RouterLink
-              class="btn"
-              to="/address"
-            >
-              Address
-            </RouterLink>
-          </li>
-          <li class="nav-item m-1">
-            <RouterLink
-              class="btn"
-              to="/curriculum"
-            >
-              Curriculum
-            </RouterLink>
-          </li>
-          <li class="nav-item m-1">
-            <RouterLink
-              class="btn"
-              to="/contact"
-            >
-              Contact
-            </RouterLink>
-          </li>
-        </ul>
+    <div>
+      <nav
+        tabs
+        align="center"
+      >
+        <p>Student information card</p>
+        <RouterLink
+          class="btn-nav"
+          to="/home"
+        >
+          Home
+        </RouterLink>
+        <RouterLink
+          class="btn-nav"
+          to="/student"
+        >
+          Student
+        </RouterLink>
+        <RouterLink
+          class="btn-nav"
+          to="/address"
+        >
+          Address
+        </RouterLink>
+        <RouterLink
+          class="btn-nav"
+          to="/curriculum"
+        >
+          Curriculum
+        </RouterLink>
+        <RouterLink
+          class="btn-nav"
+          to="/contact"
+        >
+          Contact
+        </RouterLink>
       </nav>
       <RouterView />
     </div>
-    <!-- <AddressComp />
-    <ContactComp />
-    <CurriculumComp />
-    <StudentComp /> -->
   </div>
 </template>
 
 <script>
-// import AddressComp from "./components/AddressComp.vue";
-// import ContactComp from "./components/ContactComp.vue";
-// import CurriculumComp from "./components/CurriculumComp.vue";
-// import StudentComp from "./components/StudentComp.vue";
-
 export default {
   components: {
-    // AddressComp,
-    // ContactComp,
-    // CurriculumComp,
-    // StudentComp
+
   },
   data() {
     return {
@@ -80,14 +57,30 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 header {
   border-bottom: 1px solid #000;
   font-size: 40px;
   margin-bottom:12px;
 }
-.div-alig {
+.btn-nav{
+  background-color: #87CEEB;
+  border: 1px;
+  border-style: solid;
+  border-radius: 7px;
+  box-sizing: border-box;
+  color: black;
+  font-size: 20px;
+  margin: 10px;
+  padding: 7px;
   text-align: center;
+}
+.btn-nav:hover{
+  background: #1915f7;
+  border: 1px;
+  border-style: solid;
+  border-color: #000;
+  color: white;
 }
 p {
   font-size: 22px;

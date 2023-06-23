@@ -7,6 +7,11 @@ Vue.config.productionTip = false;
 
 const routes = [
   {
+    path: "/home",
+    name: "home",
+    component: () => import("../components/HomeComp.vue")
+  },
+  {
     path: "/student",
     name: "student",
     component: () => import("../components/StudentComp.vue")
@@ -25,13 +30,6 @@ const routes = [
     path: "/contact",
     name: "contact",
     component: () => import("../components/ContactComp.vue")
-  },
-  {
-    path: "/studInfo",
-    name: "studInfo",
-    component() {
-      return import("../components/StudInfo1.vue");
-    }
   }
 ];
 

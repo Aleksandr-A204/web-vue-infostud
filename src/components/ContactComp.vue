@@ -22,7 +22,7 @@
           v-for="contact in contacts"
           :key="contact.id"
         >
-          <td>{{ contact.ContactID }}</td>
+          <td>{{ contact.Id }}</td>
           <td>{{ contact.Phone }}</td>
           <td>{{ contact.Email }}</td>
           <button
@@ -49,7 +49,7 @@
           </button>
           <button
             type="button"
-            @click="deleteClick(contact.ContactID)"
+            @click="deleteClick(contact.Id)"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -167,13 +167,13 @@ export default {
       if (confirm("Вы действительно хотите удалить этот контакт?")) {
         const response = await axios.delete(Variables.API_URL + this.name + "/" + contID);
 
-        response.data === "Deleded successfully" ? this.contacts = await this.refreshData() : console.error(Error);
+        response.data === "Deleted successfully" ? this.contacts = await this.refreshData() : console.error(Error);
       }
     },
 
     editClick(cont) {
       this.email = cont.Email;
-      this.id = cont.ContactID;
+      this.id = cont.Id;
       this.modalTitle = "Изменение контакта";
       this.phone = cont.Phone;
     },
@@ -185,7 +185,7 @@ export default {
 
     async updateClick() {
       const response = await axios.put(Variables.API_URL + this.name, {
-        ContactID: this.id,
+        Id: this.id,
         Email: this.email,
         Phone: this.phone
       });

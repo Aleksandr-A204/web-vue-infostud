@@ -25,7 +25,7 @@
           v-for="curriculum in curriculums"
           :key="curriculum.id"
         >
-          <td>{{ curriculum.CurriculumID }}</td>
+          <td>{{ curriculum.Id }}</td>
           <td>{{ curriculum.Faculty }}</td>
           <td>{{ curriculum.Speciality }}</td>
           <td>{{ curriculum.Cource }}</td>
@@ -54,7 +54,7 @@
           </button>
           <button
             type="button"
-            @click="deleteClick(curriculum.CurriculumID)"
+            @click="deleteClick(curriculum.Id)"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +194,7 @@ export default {
       if (confirm("Вы действительно хотите удалить этот учебный план?")) {
         const response = await axios.delete(Variables.API_URL + this.name + "/" + curricID);
 
-        response.data === "Deleded successfully" ? this.curriculums = await this.refreshData() : console.error(Error);
+        response.data === "Deleted successfully" ? this.curriculums = await this.refreshData() : console.error(Error);
       }
     },
 
@@ -202,7 +202,7 @@ export default {
       this.cource = curric.Cource;
       this.faculty = curric.Faculty;
       this.group = curric.Group;
-      this.id = curric.CurriculumID;
+      this.id = curric.Id;
       this.modalTitle = "Изменение учебного плана";
       this.speciality = curric.Speciality;
     },
@@ -214,7 +214,7 @@ export default {
 
     async updateClick() {
       const response = await axios.put(Variables.API_URL + this.name, {
-        CurriculumID: this.id,
+        Id: this.id,
         Cource: this.cource,
         Faculty: this.faculty,
         Group: this.group,
