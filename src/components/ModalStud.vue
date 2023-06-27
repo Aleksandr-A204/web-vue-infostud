@@ -6,7 +6,6 @@
       v-click-outside="sendModalClose"
       class="v-student"
     >
-      здесть нужен метод
       <div class="v-student__header">
         <h3>{{ rightBtnTitle }}</h3>
         <span>
