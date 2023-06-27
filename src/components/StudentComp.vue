@@ -100,7 +100,10 @@
     <ModalStud
       v-if="showModal"
       :right-btn-title="modalTitle"
+      :right-btn-confirming="modalConfirm"
       @closeModal="closeModal"
+      @createClick="createClick"
+      @updateClick="updateClick"
     >
       <div class="modal-body">
         <div class="input-group">
@@ -241,14 +244,6 @@ export default {
   },
 
   methods: {
-    toggle() {
-      this.opened = true;
-    },
-
-    hide() {
-      this.opened = false;
-    },
-
     addClick() {
       this.email = "";
       this.city = "";
@@ -315,6 +310,8 @@ export default {
       else {
         console.error(response.data);
       }
+
+      this.showModal = false;
     },
 
     editClick(stud) {
@@ -362,6 +359,8 @@ export default {
       else {
         console.error(Error);
       }
+
+      this.showModal = false;
     }
   }
 };

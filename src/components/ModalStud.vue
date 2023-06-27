@@ -25,7 +25,10 @@
         >
           Отмена
         </button>
-        <button class="submit_btn">
+        <button
+          class="submit_btn"
+          @click="sendRightBtn"
+        >
           {{ rightBtnConfirming }}
         </button>
       </div>
@@ -54,6 +57,16 @@ export default {
   methods: {
     sendModalClose() {
       this.$emit("closeModal");
+    },
+
+    sendRightBtn() {
+      console.log(this.rightBtnConfirming);
+      if (this.rightBtnConfirming === "Создать") {
+        this.$emit("createClick");
+      }
+      else if (this.rightBtnConfirming === "Сохранить") {
+        this.$emit("updateClick");
+      }
     }
   }
 
