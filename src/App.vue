@@ -46,13 +46,15 @@
 <script>
 export default {
   components: {
-
   },
   data() {
     return {
     };
   },
   methods: {
+    logChange(event) {
+      console.log(event);
+    }
   }
 };
 </script>
@@ -74,6 +76,7 @@ header {
   margin: 10px;
   padding: 7px;
   text-align: center;
+  text-decoration: none;
 }
 .btn-nav:hover{
   background: #1915f7;

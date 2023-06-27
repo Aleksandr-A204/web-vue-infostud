@@ -1,10 +1,13 @@
 <template>
   <div
+
     class="studComp"
     tabs
     align="center"
   >
-    <div class="div-group">
+    <div
+      class="div-group"
+    >
       <input
         v-model="filterMessage"
         class="inputFilter"
@@ -12,9 +15,8 @@
         placeholder="Фильтрация по любому полю..."
       >
       <button
-        id="show-modal"
-        class="btn modal"
-        @click="addClick(), showModal = true"
+        class="btn show-change_stud"
+        @click="addClick"
       >
         Добавить студента
       </button>
@@ -55,10 +57,8 @@
           <td>
             <div class="btn-option">
               <button
-                type="button"
                 class="btn"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
+                type="button"
                 @click="editClick(student)"
               >
                 <svg
@@ -97,146 +97,105 @@
         </tr>
       </tbody>
     </table>
-    <div
-      v-show="showModal"
+    <ModalStud
+      v-if="showModal"
+      :right-btn-title="modalTitle"
+      @closeModal="closeModal"
     >
-      <div class="modal-header">
-        <h3
-          id="exampleModalLabel"
-          class="modal-title"
-        >
-          {{ modalTitle }}
-        </h3>
-        <button
-          type="button"
-          class="btn btnClose"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            fill="currentColor"
-            class="bi bi-x"
-            viewBox="0 0 16 16"
-          >
-            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-          </svg>
-        </button>
-      </div>
-      <AddOrUpdateStudent />
       <div class="modal-body">
         <div class="input-group">
-          <span class="input-group-text">ФИО: </span>
           <input
             v-model="fullName"
             type="text"
             class="form-control"
+            placeholder="Введите ФИО"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Город: </span>
           <input
             v-model="city"
             type="text"
             class="form-control"
+            placeholder="Введите город"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Почтовый индекс: </span>
           <input
             v-model="postIndex"
             type="text"
             class="form-control"
+            placeholder="Введите почтовый индекс"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Улица: </span>
           <input
             v-model="street"
             type="text"
             class="form-control"
+            placeholder="Введите улицу"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Факультет: </span>
           <input
             v-model="faculty"
             type="text"
             class="form-control"
+            placeholder="Введите факультет"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Специальность: </span>
           <input
             v-model="speciality"
             type="text"
             class="form-control"
+            placeholder="Введите специальность"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Курс: </span>
           <input
             v-model="cource"
             type="text"
             class="form-control"
+            placeholder="Введите курс"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Группа: </span>
           <input
             v-model="group"
             type="text"
             class="form-control"
+            placeholder="Введите группу"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Телефон: </span>
           <input
             v-model="phone"
             type="text"
             class="form-control"
+            placeholder="Введите телефон"
           >
         </div>
         <div class="input-group">
-          <span class="input-group-text">Эл. почта: </span>
           <input
             v-model="email"
             type="text"
             class="form-control"
+            placeholder="Введите эл. почту"
           >
         </div>
-        <button
-          v-if="id===0"
-          type="button"
-          class="btn"
-          @click="createClick()"
-        >
-          Создать
-        </button>
-        <button
-          v-if="id!==0"
-          type="button"
-          class="btn"
-          @click="updateClick()"
-        >
-          Сохранить
-        </button>
       </div>
-    </div>
+    </ModalStud>
   </div>
 </template>
 
 <script>
-import AddOrUpdateStudent from "./HomeComp.vue";
 import axios from "axios";
+import ModalStud from "./ModalStud.vue";
 import Variables from "../variables.js";
 
 export default {
-
   components: {
-    AddOrUpdateStudent
+    ModalStud
   },
 
   data() {
@@ -267,7 +226,7 @@ export default {
         return this.students;
       }
       else {
-        return this.students.filter(function(elem) {
+        return this.students.filter(elem => {
           return elem.FullName.toLowerCase().includes(filter) || elem.Address.City.toLowerCase().includes(filter) || elem.Address.PostIndex.toLowerCase().includes(filter)
            || elem.Address.Street.toLowerCase().includes(filter) || elem.Curriculum.Faculty.toLowerCase().includes(filter) || elem.Curriculum.Speciality.toLowerCase().includes(filter)
            || elem.Curriculum.Cource.toLowerCase().includes(filter) || elem.Curriculum.Group.toLowerCase().includes(filter) || elem.Contact.Phone.toLowerCase().includes(filter)
@@ -282,6 +241,14 @@ export default {
   },
 
   methods: {
+    toggle() {
+      this.opened = true;
+    },
+
+    hide() {
+      this.opened = false;
+    },
+
     addClick() {
       this.email = "";
       this.city = "";
@@ -291,15 +258,18 @@ export default {
       this.filter = "";
       this.fullName = "";
       this.group = "";
-      this.modalTitle = "Добавить студента";
+      this.modalTitle = "Добавление студента";
       this.phone = "";
       this.postIndex = "";
       this.speciality = "";
       this.street = "";
+
+      this.showModal = true;
+      this.modalConfirm = "Создать";
     },
 
-    btnClose() {
-
+    closeModal() {
+      this.showModal = false;
     },
 
     async deleteClick(studID) {
@@ -355,11 +325,14 @@ export default {
       this.faculty = stud.Curriculum.Faculty;
       this.fullName = stud.FullName;
       this.group = stud.Curriculum.Group;
-      this.modalTitle = "Изменить студента";
+      this.modalTitle = "Изменение студента";
       this.phone = stud.Contact.Phone;
       this.postIndex = stud.Address.PostIndex;
       this.speciality = stud.Curriculum.Speciality;
       this.street = stud.Address.Street;
+
+      this.showModal = true;
+      this.modalConfirm = "Сохранить";
     },
 
     async updateClick() {
@@ -394,10 +367,7 @@ export default {
 };
 </script>
 
-<style scoped>
-/* .div-group{
-  margin-right: 834px;
-} */
+<style scoped lang="scss">
 .studComp{
   margin: 20px;
 }
@@ -425,10 +395,6 @@ export default {
   height: 25px;
   margin: 1px;
 }
-.btnClose{
-  border: none;
-  padding: 0px;
-}
 .btn:hover {
   background: #1915f7;
   border: 1px;
@@ -437,7 +403,6 @@ export default {
   color: white;
 }
 .btn-option{
-
   align-self: center;
 }
 table {
@@ -465,5 +430,14 @@ td {
     font-size: 15px;
   padding: 5px;
   text-align: left;
+}
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  input {
+    width: 380px;
+    border-radius: 2px;
+  };
 }
 </style>

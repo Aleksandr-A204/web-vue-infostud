@@ -7,9 +7,9 @@ Vue.config.productionTip = false;
 
 const routes = [
   {
-    path: "/home",
-    name: "home",
-    component: () => import("../components/HomeComp.vue")
+    path: "/modal_student",
+    name: "modal_student",
+    component: () => import("../components/ModalStud.vue")
   },
   {
     path: "/student",
