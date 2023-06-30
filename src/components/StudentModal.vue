@@ -27,7 +27,7 @@
         </button>
         <button
           class="submit_btn"
-          @click="sendRightBtn"
+          @click="sendRightButton"
         >
           {{ rightBtnConfirming }}
         </button>
@@ -59,17 +59,15 @@ export default {
       this.$emit("closeModal");
     },
 
-    sendRightBtn() {
-      console.log(this.rightBtnConfirming);
+    sendRightButton() {
       if (this.rightBtnConfirming === "Создать") {
-        this.$emit("createClick");
+        this.$emit("createStudentClick");
       }
       else if (this.rightBtnConfirming === "Сохранить") {
         this.$emit("updateClick");
       }
     }
   }
-
 };
 </script>
 

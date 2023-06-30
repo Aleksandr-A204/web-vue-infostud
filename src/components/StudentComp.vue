@@ -9,14 +9,14 @@
       class="div-group"
     >
       <input
-        v-model="filterMessage"
+        :value="getKeywordSearch"
         class="inputFilter"
-        type="text"
-        placeholder="Фильтрация по любому полю..."
+        placeholder="Фильтровать по любому полю..."
+        @input="setKeywordSearch"
       >
       <button
         class="btn show-change_stud"
-        @click="addClick"
+        @click="addStudentClick"
       >
         Добавить студента
       </button>
@@ -40,7 +40,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="student in studList"
+          v-for="student in validStudents"
           :key="student.id"
         >
           <td>{{ student.Id }}</td>
@@ -59,7 +59,7 @@
               <button
                 class="btn"
                 type="button"
-                @click="editClick(student)"
+                @click="editStudentClick(student)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -97,170 +97,163 @@
         </tr>
       </tbody>
     </table>
-    <ModalStud
+    <StudentModal
       v-if="showModal"
       :right-btn-title="modalTitle"
       :right-btn-confirming="modalConfirm"
       @closeModal="closeModal"
-      @createClick="createClick"
+      @createStudentClick="createStudentClick"
       @updateClick="updateClick"
     >
       <div class="modal-body">
         <div class="input-group">
           <input
-            v-model="fullName"
+            :value="getInputFullname"
             type="text"
             class="form-control"
             placeholder="Введите ФИО"
+            @input="setInputFullname"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="city"
+            :value="getInputCity"
             type="text"
             class="form-control"
             placeholder="Введите город"
+            @input="setInputCity"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="postIndex"
+            :value="getInputPostindex"
             type="text"
             class="form-control"
             placeholder="Введите почтовый индекс"
+            @input="setInputPostindex"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="street"
+            :value="getInputStreet"
             type="text"
             class="form-control"
             placeholder="Введите улицу"
+            @input="setInputStreet"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="faculty"
+            :value="getInputFaculty"
             type="text"
             class="form-control"
             placeholder="Введите факультет"
+            @input="setInputFaculty"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="speciality"
+            :value="getInputSpeciality"
             type="text"
             class="form-control"
             placeholder="Введите специальность"
+            @input="setInputSpeciality"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="cource"
+            :value="getInputCource"
             type="text"
             class="form-control"
             placeholder="Введите курс"
+            @input="setInputCource"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="group"
+            :value="getInputGroup"
             type="text"
             class="form-control"
             placeholder="Введите группу"
+            @input="setInputGroup"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="phone"
+            :value="getInputPhone"
             type="text"
             class="form-control"
             placeholder="Введите телефон"
+            @input="setInputPhone"
           >
         </div>
         <div class="input-group">
           <input
-            v-model="email"
-            type="text"
+            :value="getInputEmail"
+            type="email"
             class="form-control"
             placeholder="Введите эл. почту"
+            @input="setInputEmail"
           >
         </div>
       </div>
-    </ModalStud>
+    </StudentModal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import ModalStud from "./ModalStud.vue";
-import Variables from "../variables.js";
+import dataClient from "../API/dataClient.js";
+import StudentModal from "./StudentModal.vue";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: {
-    ModalStud
+    StudentModal
   },
+
 
   data() {
     return {
-      email: "",
-      city: "",
-      cource: "",
-      faculty: "",
-      filterMessage: "",
-      fullName: "",
-      group: "",
-      phone: "",
-      postIndex: "",
-      speciality: "",
-      street: "",
-      id: 0,
       showModal: false,
       modalTitle: "",
-      name: "student",
-      students: []
+      name: "student"
     };
   },
 
   computed: {
-    studList() {
-      let filter = this.filterMessage.toLowerCase();
-      if (filter === "") {
-        return this.students;
-      }
-      else {
-        return this.students.filter(elem => {
-          return elem.FullName.toLowerCase().includes(filter) || elem.Address.City.toLowerCase().includes(filter) || elem.Address.PostIndex.toLowerCase().includes(filter)
-           || elem.Address.Street.toLowerCase().includes(filter) || elem.Curriculum.Faculty.toLowerCase().includes(filter) || elem.Curriculum.Speciality.toLowerCase().includes(filter)
-           || elem.Curriculum.Cource.toLowerCase().includes(filter) || elem.Curriculum.Group.toLowerCase().includes(filter) || elem.Contact.Phone.toLowerCase().includes(filter)
-           || elem.Contact.Email.toLowerCase().includes(filter);
-        });
-      }
-    }
+    ...mapGetters({
+      validStudents: "studentModule/validStudents",
+      getKeywordSearch: "studentModule/getKeywordSearch",
+      getInputFullname: "studentModule/getInputFullname",
+      getInputCity: "studentModule/getInputCity",
+      getInputPostindex: "studentModule/getInputPostIndex",
+      getInputStreet: "studentModule/getInputStreet",
+      getInputFaculty: "studentModule/getInputFaculty",
+      getInputSpeciality: "studentModule/getInputSpeciality",
+      getInputCource: "studentModule/getInputCource",
+      getInputGroup: "studentModule/getInputGroup",
+      getInputPhone: "studentModule/getInputPhone",
+      getInputEmail: "studentModule/getInputEmail"
+    })
   },
 
   async mounted() {
-    this.students = await this.refreshData();
+    await this.getStudentData(dataClient.API_URL + this.name);
   },
 
   methods: {
-    addClick() {
-      this.email = "";
-      this.city = "";
-      this.cource = "";
-      this.id = 0;
-      this.faculty = "";
-      this.filter = "";
-      this.fullName = "";
-      this.group = "";
-      this.modalTitle = "Добавление студента";
-      this.phone = "";
-      this.postIndex = "";
-      this.speciality = "";
-      this.street = "";
+    ...mapActions({
+      addStudent: "studentModule/addStudent",
+      createStudent: "studentModule/createStudent",
+      editStudent: "studentModule/editStudent",
+      getStudentData: "studentModule/getStudentData"
+    }),
 
-      this.showModal = true;
+    addStudentClick() {
       this.modalConfirm = "Создать";
+      this.modalTitle = "Добавление студента";
+      this.showModal = true;
     },
 
     closeModal() {
@@ -269,10 +262,10 @@ export default {
 
     async deleteClick(studID) {
       if (confirm("Вы действительно хотите удалить студента?")) {
-        const response = await axios.delete(Variables.API_URL + this.name + "/" + studID);
+        const response = await axios.delete(dataClient.API_URL + this.urlName + "/" + studID);
 
         if (response.data === "Deleted successfully") {
-          this.students = await this.refreshData();
+          this.students = await this.fetchStudData();
         }
         else {
           console.error(Error);
@@ -280,60 +273,66 @@ export default {
       }
     },
 
-    async refreshData() {
-      const response = await axios.get(Variables.API_URL + this.name);
-      return response.data;
-    },
-
-    async createClick() {
-      const response = await axios.post(Variables.API_URL + this.name, {
-        Address: {
-          City: this.city,
-          PostIndex: this.postIndex,
-          Street: this.street
-        },
-        Curriculum: {
-          Cource: this.cource,
-          Faculty: this.faculty,
-          Group: this.group,
-          Speciality: this.speciality
-        },
-        Contact: {
-          Email: this.email,
-          Phone: this.phone
-        },
-        FullName: this.fullName
-      });
-      if (response.data === "Added successfully") {
-        this.students = await this.refreshData();
-      }
-      else {
-        console.error(response.data);
-      }
+    createStudentClick() {
+      this.createStudent(dataClient.API_URL + this.name);
 
       this.showModal = false;
     },
 
-    editClick(stud) {
-      this.email = stud.Contact.Email;
-      this.city = stud.Address.City;
-      this.cource = stud.Curriculum.Cource;
-      this.id = stud.Id;
-      this.faculty = stud.Curriculum.Faculty;
-      this.fullName = stud.FullName;
-      this.group = stud.Curriculum.Group;
-      this.modalTitle = "Изменение студента";
-      this.phone = stud.Contact.Phone;
-      this.postIndex = stud.Address.PostIndex;
-      this.speciality = stud.Curriculum.Speciality;
-      this.street = stud.Address.Street;
+    editStudentClick(selectedStudent) {
+      this.editStudent(selectedStudent);
 
+      this.modalTitle = "Изменение студента";
       this.showModal = true;
       this.modalConfirm = "Сохранить";
     },
 
+    setKeywordSearch(event) {
+      this.$store.dispatch("studentModule/setKeywordSearch", event.target.value);
+    },
+
+    setInputFullname(event) {
+      this.$store.dispatch("studentModule/setInputFullname", event.target.value);
+    },
+
+    setInputCity(event) {
+      this.$store.dispatch("studentModule/setInputCity", event.target.value);
+    },
+
+    setInputPostindex(event) {
+      this.$store.dispatch("studentModule/setInputPostindex", event.target.value);
+    },
+
+    setInputStreet(event) {
+      this.$store.dispatch("studentModule/setInputStreet", event.target.value);
+    },
+
+    setInputFaculty(event) {
+      this.$store.dispatch("studentModule/setInputFaculty", event.target.value);
+    },
+
+    setInputSpeciality(event) {
+      this.$store.dispatch("studentModule/setInputSpeciality", event.target.value);
+    },
+
+    setInputCource(event) {
+      this.$store.dispatch("studentModule/setInputCource", event.target.value);
+    },
+
+    setInputGroup(event) {
+      this.$store.dispatch("studentModule/setInputGroup", event.target.value);
+    },
+
+    setInputPhone(event) {
+      this.$store.dispatch("studentModule/setInputPhone", event.target.value);
+    },
+
+    setInputEmail(event) {
+      this.$store.dispatch("studentModule/setInputEmail", event.target.value);
+    },
+
     async updateClick() {
-      const response = await axios.put(Variables.API_URL + this.name, {
+      const response = await axios.put(dataClient.API_URL + this.urlName, {
         Address: {
           City: this.city,
           PostIndex: this.postIndex,
@@ -354,7 +353,7 @@ export default {
       });
 
       if (response.data === "Edited successfully") {
-        this.students = await this.refreshData();
+        this.students = await this.fetchStudData();
       }
       else {
         console.error(Error);
@@ -375,13 +374,9 @@ export default {
   border-radius: 10px;
   border-style: solid;
   border-color: black;
-  color: rgb(156, 156, 156);
   height: 25px;
   margin-right: 15px;
   width: 400px;
-}
-.input-group {
-  margin-bottom: 7px;
 }
 .btn {
   background-color: #87CEEB;
@@ -434,6 +429,7 @@ td {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 7px;
   input {
     width: 380px;
     border-radius: 2px;

@@ -135,7 +135,8 @@
 
 <script>
 import axios from "axios";
-import Variables from "../variables.js";
+
+const API_URL = "http://localhost:5053/api/";
 
 export default {
   data() {
@@ -164,7 +165,7 @@ export default {
     },
 
     async createClick() {
-      const response = await axios.post(Variables.API_URL + this.name, {
+      const response = await axios.post(API_URL + this.name, {
         City: this.city,
         PostIndex: this.postIndex,
         Street: this.street
@@ -180,7 +181,7 @@ export default {
 
     async deleteClick(addrID) {
       if (confirm("Вы действительно хотите удалить адресс?")) {
-        const response = await axios.delete(Variables.API_URL + this.name + "/" + addrID);
+        const response = await axios.delete(API_URL + this.name + "/" + addrID);
 
         if (response.data === "Deleted successfully") {
           this.addresses = await this.refreshData();
@@ -200,14 +201,14 @@ export default {
     },
 
     async refreshData() {
-      let response = await axios.get(Variables.API_URL + this.name);
+      let response = await axios.get(API_URL + this.name);
       return response.data;
     },
 
     async updateClick() {
       const response = await axios({
         method: "put",
-        url: Variables.API_URL + this.name,
+        url: API_URL + this.name,
         data: {
           Id: this.id,
           City: this.city,

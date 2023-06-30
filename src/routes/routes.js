@@ -9,7 +9,7 @@ const routes = [
   {
     path: "/modal_student",
     name: "modal_student",
-    component: () => import("../components/ModalStud.vue")
+    component: () => import("../components/StudentModal.vue")
   },
   {
     path: "/student",

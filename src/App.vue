@@ -45,17 +45,6 @@
 
 <script>
 export default {
-  components: {
-  },
-  data() {
-    return {
-    };
-  },
-  methods: {
-    logChange(event) {
-      console.log(event);
-    }
-  }
 };
 </script>
 
