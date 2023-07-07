@@ -8,6 +8,11 @@ import "material-design-icons-iconfont";
 Vue.config.productionTip = false;
 
 Vue.use(ClickOutside);
+// Vue.mixin({
+//   mounted() {
+//     console.log("I am mixed into every component.");
+//   }
+// });
 
 export default new Vue({
   store,

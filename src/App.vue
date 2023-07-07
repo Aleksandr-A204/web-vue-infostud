@@ -1,41 +1,35 @@
 <template>
   <div id="app">
-    <header>Welcome to the site!</header>
+    <header>Добро пожаловать!</header>
     <div>
       <nav
         tabs
         align="center"
       >
-        <p>Student information card</p>
-        <RouterLink
-          class="btn-nav"
-          to="/home"
-        >
-          Home
-        </RouterLink>
+        <p>Информационная карточка студентов</p>
         <RouterLink
           class="btn-nav"
           to="/student"
         >
-          Student
+          Студент
         </RouterLink>
         <RouterLink
           class="btn-nav"
           to="/address"
         >
-          Address
+          Адрес
         </RouterLink>
         <RouterLink
           class="btn-nav"
           to="/curriculum"
         >
-          Curriculum
+          Курс обучения
         </RouterLink>
         <RouterLink
           class="btn-nav"
           to="/contact"
         >
-          Contact
+          Контакт
         </RouterLink>
       </nav>
       <RouterView />

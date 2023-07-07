@@ -7,29 +7,24 @@ Vue.config.productionTip = false;
 
 const routes = [
   {
-    path: "/modal_student",
-    name: "modal_student",
-    component: () => import("../components/StudentModal.vue")
-  },
-  {
     path: "/student",
     name: "student",
-    component: () => import("../components/StudentComp.vue")
+    component: () => import("../components/Student.vue")
   },
   {
     path: "/address",
     name: "address",
-    component: () => import("../components/AddressComp.vue")
+    component: () => import("../components/Address.vue")
   },
   {
     path: "/curriculum",
     name: "curriculum",
-    component: () => import("../components/CurriculumComp.vue")
+    component: () => import("../components/Curriculum.vue")
   },
   {
     path: "/contact",
     name: "contact",
-    component: () => import("../components/ContactComp.vue")
+    component: () => import("../components/Contact.vue")
   }
 ];
 
