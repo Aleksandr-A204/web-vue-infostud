@@ -34,7 +34,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="curriculum in validCurriculums"
+          v-for="curriculum in curriculums"
           :key="curriculum.id"
         >
           <td>{{ curriculum.Id }}</td>
@@ -85,19 +85,24 @@
         </tr>
       </tbody>
     </table>
+
     <CurriculumModal
-      v-if="showModal"
-      :right-button-title="modalTitle"
-      :right-button-confirming="modalConfirm"
-      :selected-item="getSelectedCurriculum"
-      @closeModal="closeModal"
+      v-if="showAddModal"
+      title-modal="Создание"
+      @closeModal="closeAddModal"
+    />
+
+    <CurriculumModal
+      v-if="showEditModal"
+      title-modal="Редактирование"
+      :selected-item="selectedCurriculum"
+      @closeModal="closeEditModal"
     />
   </div>
 </template>
 
 <script>
-import CurriculumModal from "../modal/Curriculum.vue";
-import dataClient from "../API/dataClient.js";
+import CurriculumModal from "../modal/CurriculumModal.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -107,56 +112,52 @@ export default {
 
   data() {
     return {
-      getSelectedCurriculum: {},
-      name: "curriculum",
-      showModal: false
+      showAddModal: false,
+      showEditModal: false
     };
   },
 
   computed: mapGetters({
-    validCurriculums: "curriculumModule/validCurriculums",
-    getKeywordSearch: "curriculumModule/getKeywordSearch"
+    curriculums: "curriculumModule/curriculums",
+    getKeywordSearch: "curriculumModule/keywordSearch"
   }),
 
   async mounted() {
-    await this.getCurriculumData(dataClient.API_URL + this.name);
-    this.curriculums = await this.$store.state.curriculums;
+    await this.getCurriculumData();
   },
 
   methods: {
     ...mapActions({
       deleteCurriculum: "curriculumModule/deleteCurriculum",
-      getCurriculumData: "curriculumModule/getCurriculumData"
+      getCurriculumData: "curriculumModule/curriculumData"
     }),
 
     addCurriculumClick() {
-      this.getSelectedCurriculum = {};
-
-      this.modalTitle = "Добавление учебного плана";
-      this.modalConfirm = "Создать";
-      this.showModal = true;
+      this.showAddModal = true;
     },
 
-    closeModal() {
-      this.showModal = false;
+    closeAddModal() {
+      this.showAddModal = false;
     },
 
-    async deleteCurriculumClick(curriculumID) {
-      if (confirm("Вы действительно хотите удалить этот учебный план?")) {
-        this.deleteCurriculum(dataClient.API_URL + this.name + "/" + curriculumID);
+    closeEditModal() {
+      this.showEditModal = false;
+    },
+
+    async deleteCurriculumClick(curriculumId) {
+      if (confirm("Вы действительно хотите удалить этот курс обучения?")) {
+        this.deleteCurriculum(curriculumId);
       }
     },
 
     editCurriculumClick(selectedCurriculum) {
-      this.getSelectedCurriculum = selectedCurriculum;
+      this.selectedCurriculum = selectedCurriculum;
 
-      this.modalConfirm = "Сохранить";
-      this.modalTitle = "Редактирование учебного плана";
-      this.showModal = true;
+      this.showEditModal = true;
     },
 
     setKeywordSearch(event) {
-      this.$store.dispatch("curriculumModule/setKeywordSearch", event.target.value);
+      this.$store.dispatch("curriculumModule/keywordSearch", event.target.value);
     }
   }
 };
@@ -197,7 +198,6 @@ export default {
     background: white;
     border-collapse: collapse;
     border-color: gray;
-    border-style: double;
     font-family: sans-serif;
     font-size: 14px;
     margin-top: 7px;

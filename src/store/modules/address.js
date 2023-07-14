@@ -1,12 +1,15 @@
-import axios from "axios";
+import AddressClient from "@/API/addressClient";
+import router from "@/route/routes.js";
+
+const addressClient = new AddressClient();
 
 export default {
   strict: true,
   namespaced: true,
 
   state: {
-    keywordSearch: "",
-    addresses: []
+    addresses: [],
+    keywordSearch: ""
   },
 
   mutations: {
@@ -20,69 +23,60 @@ export default {
   },
 
   actions: {
-    async createAddress({ commit }, object) {
-      const response = await axios.post(object.API_URL, {
-        City: object.address.city,
-        PostIndex: object.address.postindex,
-        Street: object.address.street
-      });
+    async createAddress({ commit }, objectAddress) {
+      const addresses = await addressClient.createAddress(router.currentRoute.name, objectAddress);
 
-      commit("updateAddressData", response.data);
+      commit("updateAddressData", addresses);
     },
 
-    async deleteAddress({ commit }, addressNameWithIdAndAPI_URL) {
+    async deleteAddress({ commit }, addressId) {
       try {
-        const response = await axios.delete(addressNameWithIdAndAPI_URL);
+        const addresses = await addressClient.deleteAddress(router.currentRoute.name, addressId);
 
-        commit("updateAddressData", response.data);
+        commit("updateAddressData", addresses);
       }
       catch (err) {
-        console.log("Невозможно удалить.");
         console.log(err);
+        alert("Невозможно удалить.");
       }
     },
 
-    async getAddressData({ commit }, ApiWithAddressName_URL) {
-      const response = await axios.get(ApiWithAddressName_URL);
+    async addressData({ commit }, routeName = router.currentRoute.name) {
+      const addresses = await addressClient.getAddresses(routeName);
 
-      commit("updateAddressData", response.data);
+      commit("updateAddressData", addresses);
     },
 
-    setKeywordSearch({ commit }, keywordSearch) {
+    keywordSearch({ commit }, keywordSearch) {
       commit("updateKeywordSearch", keywordSearch);
     },
 
-    async updateAddress({ commit }, object) {
-      const response = await axios.put(object.API_URL, {
-        Id: object.id,
-        City: object.address.city,
-        PostIndex: object.address.postindex,
-        Street: object.address.street
-      });
+    async updateAddress({ commit }, objectAddress) {
+      const addresses = await addressClient.updateAddress(router.currentRoute.name, objectAddress);
 
-      commit("updateAddressData", response.data);
+      commit("updateAddressData", addresses);
     }
   },
 
   getters: {
-    getAllAddresses(state) {
+    allAddresses(state) {
       return state.addresses;
     },
 
-    getKeywordSearch(state) {
+    keywordSearch(state) {
       return state.keywordSearch;
     },
 
-    validAddress(state) {
-      const bottomWordSearch = state.keywordSearch.toLowerCase();
-      if (bottomWordSearch === "") {
+    addresses(state) {
+      const wordInLowerCase = state.keywordSearch.toLowerCase();
+      if (wordInLowerCase === "") {
         return state.addresses;
       }
       else {
         return state.addresses.filter(a => {
-          return a.City?.toLowerCase().includes(bottomWordSearch)
-          || a.PostIndex?.toLowerCase().includes(bottomWordSearch)
-          || a.Street?.toLowerCase().includes(bottomWordSearch);
+          return a.City?.toLowerCase().includes(wordInLowerCase)
+          || a.PostIndex?.toLowerCase().includes(wordInLowerCase)
+          || a.Street?.toLowerCase().includes(wordInLowerCase);
         });
       }
     }

@@ -39,7 +39,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="student in validStudents"
+          v-for="student in students"
           :key="student.id"
         >
           <td>{{ student.Id }}</td>
@@ -78,7 +78,7 @@
               <button
                 class="btn"
                 type="button"
-                @click="deleteClick(student.Id)"
+                @click="deleteStudentClick(student.Id)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -96,19 +96,24 @@
         </tr>
       </tbody>
     </table>
+
     <StudentModal
-      v-if="showModal"
-      :right-btn-title="modalTitle"
-      :right-btn-confirming="modalConfirm"
-      :selected-item="getSelectedStudent"
-      @closeModal="closeModal"
+      v-if="showAddModal"
+      title-modal="Создание"
+      @closeModal="closeAddModal"
+    />
+
+    <StudentModal
+      v-if="showEditModal"
+      title-modal="Редактирование"
+      :student-object="studentObject"
+      @closeModal="closeEditModal"
     />
   </div>
 </template>
 
 <script>
-import dataClient from "../API/dataClient.js";
-import StudentModal from "../modal/Student.vue";
+import StudentModal from "../modal/StudentModal.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -118,57 +123,54 @@ export default {
 
   data() {
     return {
-      name: "student",
-      getSelectedStudent: { },
-      showModal: false
+      showAddModal: false,
+      showEditModal: false
     };
   },
 
   computed: {
     ...mapGetters({
-      validStudents: "studentModule/validStudents",
-      getKeywordSearch: "studentModule/getKeywordSearch"
+      students: "studentModule/students",
+      getKeywordSearch: "studentModule/keywordSearch"
     })
   },
 
   async mounted() {
-    await this.getStudentData(dataClient.API_URL + this.name);
+    await this.getStudentData();
   },
 
   methods: {
     ...mapActions({
       deleteStudent: "studentModule/deleteStudent",
-      getStudentData: "studentModule/getStudentData"
+      getStudentData: "studentModule/studentData"
     }),
 
     addStudentClick() {
-      this.getSelectedStudent = {};
-
-      this.modalConfirm = "Создать";
-      this.modalTitle = "Добавление студента";
-      this.showModal = true;
+      this.showAddModal = true;
     },
 
-    closeModal() {
-      this.showModal = false;
+    closeAddModal() {
+      this.showAddModal = false;
     },
 
-    deleteClick(studID) {
+    closeEditModal() {
+      this.showEditModal = false;
+    },
+
+    deleteStudentClick(studentId) {
       if (confirm("Вы действительно хотите удалить студента?")) {
-        this.deleteStudent(dataClient.API_URL + this.name + "/" + studID);
+        this.deleteStudent(studentId);
       }
     },
 
     editStudentClick(selectedStudent) {
-      this.getSelectedStudent = selectedStudent;
+      this.studentObject = selectedStudent;
 
-      this.modalConfirm = "Сохранить";
-      this.modalTitle = "Редактирование студента";
-      this.showModal = true;
+      this.showEditModal = true;
     },
 
     setKeywordSearch(event) {
-      this.$store.dispatch("studentModule/setKeywordSearch", event.target.value);
+      this.$store.dispatch("studentModule/keywordSearch", event.target.value);
     }
   }
 };
@@ -212,7 +214,6 @@ export default {
     background: white;
     border-collapse: collapse;
     border-color: gray;
-    border-style: double;
     font-family: sans-serif;
     font-size: 14px;
     margin-top: 7px;

@@ -33,7 +33,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="contact in validContacts"
+          v-for="contact in contacts"
           :key="contact.id"
         >
           <td>{{ contact.Id }}</td>
@@ -82,77 +82,24 @@
         </tr>
       </tbody>
     </table>
+
     <ContactModal
-      v-if="showModal"
-      :right-btn-title="modalTitle"
-      :right-btn-confirming="modalConfirm"
-      :selected-item="getSelectedContact"
-      @closeModal="closeModal"
+      v-if="showAddModal"
+      title-modal="Создание"
+      @closeModal="closeAddModal"
     />
-    <!-- <div
-      id="exampleModal"
-      class="modal fade"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-header">
-          <h5
-            id="exampleModalLabel"
-            class="modal-title"
-          >
-            {{ modalTitle }}
-          </h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          />
-        </div>
-        <div class="modal-body">
-          <div class="input-group mb-3">
-            <span class="input-group-text">Телефон: </span>
-            <input
-              v-model="phone"
-              type="text"
-              class="form-control"
-            >
-          </div>
-          <div class="input-group mb-3">
-            <span class="input-group-text">Эл. почта: </span>
-            <input
-              v-model="email"
-              type="text"
-              class="form-control"
-            >
-          </div>
-          <button
-            v-if="id===0"
-            type="button"
-            class="btn btn-primary"
-            @click="createClick()"
-          >
-            Create
-          </button>
-          <button
-            v-if="id!==0"
-            type="button"
-            class="btn btn-primary"
-            @click="updateClick()"
-          >
-            Update
-          </button>
-        </div>
-      </div>
-    </div> -->
+
+    <ContactModal
+      v-if="showEditModal"
+      title-modal="Редактирование"
+      :selected-item="selectedContact"
+      @closeModal="closeEditModal"
+    />
   </div>
 </template>
 
 <script>
-import ContactModal from "../modal/Contact.vue";
-import dataClient from "../API/dataClient.js";
+import ContactModal from "../modal/ContactModal.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -162,55 +109,52 @@ export default {
 
   data() {
     return {
-      getSelectedContact: {},
-      name: "contact",
-      showModal: false
+      showAddModal: false,
+      showEditModal: false
     };
   },
 
   computed: mapGetters({
-    getKeywordSearch: "contactModule/getKeywordSearch",
-    validContacts: "contactModule/validContacts"
+    getKeywordSearch: "contactModule/keywordSearch",
+    contacts: "contactModule/contacts"
   }),
 
   mounted() {
-    this.getAllContacts(dataClient.API_URL + this.name);
+    this.getAllContacts();
   },
 
   methods: {
     ...mapActions({
       deleteContact: "contactModule/deleteContact",
-      getAllContacts: "contactModule/getAllContacts"
+      getAllContacts: "contactModule/allContacts"
     }),
 
     addContactClick() {
-      this.getSelectedContact = {};
-
-      this.modalTitle = "Добавление контакта";
-      this.modalConfirm = "Создать";
-      this.showModal = true;
+      this.showAddModal = true;
     },
 
-    closeModal() {
-      this.showModal = false;
+    closeAddModal() {
+      this.showAddModal = false;
     },
 
-    deleteContactClick(contID) {
+    closeEditModal() {
+      this.showEditModal = false;
+    },
+
+    deleteContactClick(contactId) {
       if (confirm("Вы действительно хотите удалить этот контакт?")) {
-        this.deleteContact(dataClient.API_URL + this.name + "/" + contID);
+        this.deleteContact(contactId);
       }
     },
 
     editContactClick(selectedContact) {
-      this.getSelectedContact = selectedContact;
+      this.selectedContact = selectedContact;
 
-      this.modalConfirm = "Сохранить";
-      this.modalTitle = "Редактирование контакта";
-      this.showModal = true;
+      this.showEditModal = true;
     },
 
     setKeywordSearch(event) {
-      this.$store.dispatch("contactModule/setKeywordSearch", event.target.value);
+      this.$store.dispatch("contactModule/keywordSearch", event.target.value);
     }
   }
 };
@@ -251,7 +195,6 @@ export default {
     background: white;
     border-collapse: collapse;
     border-color: gray;
-    border-style: double;
     font-family: sans-serif;
     font-size: 14px;
     margin-top: 7px;

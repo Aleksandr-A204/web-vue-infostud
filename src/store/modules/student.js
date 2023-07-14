@@ -1,4 +1,7 @@
-import axios from "axios";
+import router from "@/route/routes";
+import StudentClient from "@/API/studentClient.js";
+
+const studentClient = new StudentClient();
 
 export default {
   strict: true,
@@ -20,92 +23,63 @@ export default {
   },
 
   actions: {
-    async createStudent({ commit }, student) {
-      const responce = await axios.post(student.API_URL, {
-        Address: {
-          City: student.address.city,
-          PostIndex: student.address.postindex,
-          Street: student.address.street
-        },
-        Curriculum: {
-          Course: student.curriculum.course,
-          Faculty: student.curriculum.faculty,
-          Group: student.curriculum.group,
-          Speciality: student.curriculum.speciality
-        },
-        Contact: {
-          Email: student.contact.email,
-          Phone: student.contact.phone
-        },
-        FullName: student.fullname
-      });
+    async createStudent({ commit }, studentObject) {
+      const students = await studentClient.addNewStudent(router.currentRoute.name, studentObject);
 
-      commit("updateStudentData", responce.data);
+      commit("updateStudentData", students);
     },
 
-    async deleteStudent({ commit }, studentNameWithIdAndAPI_URL) {
-      const responce = await axios.delete(studentNameWithIdAndAPI_URL);
+    async deleteStudent({ commit }, studentId) {
+      try {
+        const students = await studentClient.deleteStudent(router.currentRoute.name, studentId);
 
-      commit("updateStudentData", responce.data);
+        commit("updateStudentData", students);
+      }
+      catch (err) {
+        console.log(err);
+        alert("Невозможно удалить.");
+      }
     },
 
-    async getStudentData({ commit }, studentNameAndAPI_URL) {
-      const responce = await axios.get(studentNameAndAPI_URL);
+    async studentData({ commit }) {
+      const students = await studentClient.getStudents(router.currentRoute.name);
 
-      commit("updateStudentData", responce.data);
+      commit("updateStudentData", students);
     },
 
-    setKeywordSearch({ commit }, keywordSearch) {
+    keywordSearch({ commit }, keywordSearch) {
       commit("updateSearchKeyword", keywordSearch);
     },
 
-    async updateStudent({ commit }, student) {
-      const response = await axios.put(student.API_URL, {
-        Address: {
-          City: student.address.city,
-          PostIndex: student.address.postindex,
-          Street: student.address.street
-        },
-        Curriculum: {
-          Course: student.curriculum.course,
-          Faculty: student.curriculum.faculty,
-          Group: student.curriculum.group,
-          Speciality: student.curriculum.speciality
-        },
-        Contact: {
-          Email: student.contact.email,
-          Phone: student.contact.phone
-        },
-        Id: student.id,
-        FullName: student.fullname
-      });
+    async updateStudent({ commit }, studentObject) {
+      const students = await studentClient.updateStudent(router.currentRoute.name, studentObject);
 
-      commit("updateStudentData", response.data);
+      commit("updateStudentData", students);
     }
   },
 
   getters: {
-    getKeywordSearch(state) {
+    keywordSearch(state) {
       return state.keywordSearch;
     },
 
-    validStudents(state) {
-      const bottomWordSearch = state.keywordSearch.toLowerCase();
-      if (bottomWordSearch === "") {
+    students(state) {
+      const lowerСaseKeyword = state.keywordSearch.trim().toLowerCase();
+      if (lowerСaseKeyword === "") {
         return state.students;
       }
       else {
         return state.students.filter(s => {
-          return s.FullName?.toLowerCase().includes(bottomWordSearch)
-            || s.Address.City?.toLowerCase().includes(bottomWordSearch)
-            || s.Address.PostIndex?.toLowerCase().includes(bottomWordSearch)
-            || s.Address.Street?.toLowerCase().includes(bottomWordSearch)
-            || s.Curriculum.Faculty?.toLowerCase().includes(bottomWordSearch)
-            || s.Curriculum.Speciality?.toLowerCase().includes(bottomWordSearch)
-            || s.Curriculum.Course?.toLowerCase().includes(bottomWordSearch)
-            || s.Curriculum.Group?.toLowerCase().includes(bottomWordSearch)
-            || s.Contact.Phone?.toLowerCase().includes(bottomWordSearch)
-            || s.Contact.Email?.toLowerCase().includes(bottomWordSearch);
+          return s.FullName?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Address.City?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Address.PostIndex?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Address.Street?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Curriculum.Faculty?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Curriculum.Speciality?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Curriculum.Course?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Curriculum.Group?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Contact.Phone?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Contact.Email?.toLowerCase().includes(lowerСaseKeyword);
         });
       }
     }

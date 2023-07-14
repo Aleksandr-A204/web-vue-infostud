@@ -1,12 +1,15 @@
-import axios from "axios";
+import ContactClient from "@/API/contactClient.js";
+import router from "@/route/routes";
+
+const contactClient = new ContactClient();
 
 export default {
   strict: true,
   namespaced: true,
 
   state: {
-    keywordSearch: "",
-    contacts: []
+    contacts: [],
+    keywordSearch: ""
   },
 
   mutations: {
@@ -21,53 +24,46 @@ export default {
 
   actions: {
     async createContact({ commit }, object) {
-      const response = await axios.post(object.API_URL, {
-        Phone: object.contact.phone,
-        Email: object.contact.email
-      });
+      const contacts = await contactClient.createContact(router.currentRoute.name, object);
 
-      commit("updateContactData", response.data);
+      commit("updateContactData", contacts);
     },
 
-    async deleteContact({ commit }, addressNameWithIdAndAPI_URL) {
+    async deleteContact({ commit }, contactId) {
       try {
-        const response = await axios.delete(addressNameWithIdAndAPI_URL);
+        const contacts = await contactClient.deleteContact(router.currentRoute.name, contactId);
 
-        commit("updateContactData", response.data);
+        commit("updateContactData", contacts);
       }
       catch (err) {
-        console.log("Невозможно удалить.");
         console.log(err);
+        alert("Невозможно удалить.");
       }
     },
 
-    async getAllContacts({ commit }, addressNameAndAPI_URL) {
-      const responce = await axios.get(addressNameAndAPI_URL);
+    async allContacts({ commit }) {
+      const contacts = await contactClient.getContactData(router.currentRoute.name);
 
-      commit("updateContactData", responce.data);
+      commit("updateContactData", contacts);
     },
 
-    setKeywordSearch({ commit }, keywordSearch) {
+    keywordSearch({ commit }, keywordSearch) {
       commit("updateKeywordSearch", keywordSearch);
     },
 
     async updateContact({ commit }, object) {
-      const responce = await axios.put(object.API_URL, {
-        Id: object.id,
-        Phone: object.contact.phone,
-        Email: object.contact.email
-      });
+      const contacts = await contactClient.updateContact(router.currentRoute.name, object);
 
-      commit("updateContactData", responce.data);
+      commit("updateContactData", contacts);
     }
   },
 
   getters: {
-    getKeywordSearch(state) {
+    keywordSearch(state) {
       return state.keywordSearch;
     },
 
-    validContacts(state) {
+    contacts(state) {
       const keywordInLowerCase = state.keywordSearch.toLowerCase();
       if (keywordInLowerCase === "") {
         return state.contacts;

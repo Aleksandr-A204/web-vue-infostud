@@ -32,7 +32,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="address in validAddress"
+          v-for="address in addresses"
           :key="address.id"
         >
           <td>{{ address.Id }}</td>
@@ -82,19 +82,24 @@
         </tr>
       </tbody>
     </table>
+
     <AddressModal
-      v-if="showModal"
-      :right-btn-confirming="modalConfirm"
-      :right-btn-title="modalTitle"
-      :selected-item="getSelectedAddress"
-      @closeModal="closeModal"
+      v-if="showAddModal"
+      title-modal="Создание"
+      @closeModal="closeAddModal"
+    />
+
+    <AddressModal
+      v-if="showEditModal"
+      title-modal="Редактирование"
+      :address-object="selectedAddress"
+      @closeModal="closeEditModal"
     />
   </div>
 </template>
 
 <script>
-import AddressModal from "../modal/Address.vue";
-import dataClient from "../API/dataClient";
+import AddressModal from "../modal/AddressModal.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -104,55 +109,52 @@ export default {
 
   data() {
     return {
-      name: "address",
-      showModal: false,
-      getSelectedAddress: {}
+      showAddModal: false,
+      showEditModal: false
     };
   },
 
   computed: mapGetters({
-    validAddress: "addressModule/validAddress",
-    getKeywordSearch: "addressModule/getKeywordSearch"
+    addresses: "addressModule/addresses",
+    getKeywordSearch: "addressModule/keywordSearch"
   }),
 
   async mounted() {
-    await this.getAddressData(dataClient.API_URL + this.name);
+    await this.getAddressData();
   },
 
   methods: {
     ...mapActions({
       deleteAddress: "addressModule/deleteAddress",
-      getAddressData: "addressModule/getAddressData"
+      getAddressData: "addressModule/addressData"
     }),
 
     addStudentClick() {
-      this.getSelectedAddress = {};
-
-      this.modalConfirm = "Создать";
-      this.modalTitle = "Добавление адреса";
-      this.showModal = true;
+      this.showAddModal = true;
     },
 
-    async deleteAddressClick(addressID) {
-      if (confirm("Вы действительно хотите удалить адресс?")) {
-        this.deleteAddress(dataClient.API_URL + this.name + "/" + addressID);
+    deleteAddressClick(addressId) {
+      if (confirm("Вы действительно хотите удалить адрес?")) {
+        this.deleteAddress(addressId);
       }
     },
 
     editAddressClick(selectedAddress) {
-      this.getSelectedAddress = selectedAddress;
+      this.selectedAddress = selectedAddress;
 
-      this.modalConfirm = "Сохранить";
-      this.modalTitle = "Редактирование адреса";
-      this.showModal = true;
+      this.showEditModal = true;
     },
 
-    closeModal() {
-      this.showModal = false;
+    closeAddModal() {
+      this.showAddModal = false;
+    },
+
+    closeEditModal() {
+      this.showEditModal = false;
     },
 
     setKeywordSearch(event) {
-      this.$store.dispatch("addressModule/setKeywordSearch", event.target.value);
+      this.$store.dispatch("addressModule/keywordSearch", event.target.value);
     }
   }
 };
@@ -193,7 +195,6 @@ export default {
     background: white;
     border-collapse: collapse;
     border-color: gray;
-    border-style: double;
     font-family: sans-serif;
     font-size: 14px;
     margin-top: 7px;

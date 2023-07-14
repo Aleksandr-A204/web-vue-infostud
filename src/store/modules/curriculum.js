@@ -1,4 +1,7 @@
-import axios from "axios";
+import CurriculumClient from "@/API/curriculumClient.js";
+import router from "@/route/routes";
+
+const curriculumClient = new CurriculumClient();
 
 export default {
   strict: true,
@@ -21,68 +24,57 @@ export default {
 
   actions: {
     async createCurriculum({ commit }, curriculumObject) {
-      const response = await axios.post(curriculumObject.API_URL, {
-        Course: curriculumObject.course,
-        Faculty: curriculumObject.faculty,
-        Group: curriculumObject.group,
-        Speciality: curriculumObject.speciality
-      });
+      const curriculums = await curriculumClient.createCurriculum(router.currentRoute.name, curriculumObject);
 
-      commit("updateCurriculumData", response.data);
+      commit("updateCurriculumData", curriculums);
     },
 
-    async deleteCurriculum({ commit }, curriculumNameWithIdAndAPI_URL) {
+    async deleteCurriculum({ commit }, curriculumId) {
       try {
-        const response = await axios.delete(curriculumNameWithIdAndAPI_URL);
+        const curriculums = await curriculumClient.deleteCurriculum(router.currentRoute.name, curriculumId);
 
-        commit("updateCurriculumData", response.data);
+        commit("updateCurriculumData", curriculums);
       }
       catch (err) {
-        console.log("Невозможно удалить.");
         console.log(err);
+        alert("Невозможно удалить.");
       }
     },
 
-    async getCurriculumData({ commit }, curriculumNameAndAPI_URL) {
-      const responce = await axios.get(curriculumNameAndAPI_URL);
+    async curriculumData({ commit }, routeName = router.currentRoute.name) {
+      const curriculums = await curriculumClient.getCurriculum(routeName);
 
-      commit("updateCurriculumData", responce.data);
+      commit("updateCurriculumData", curriculums);
     },
 
-    setKeywordSearch({ commit }, keywordSearch) {
+    keywordSearch({ commit }, keywordSearch) {
       commit("updateKeywordSearch", keywordSearch);
     },
 
     async updateCurriculum({ commit }, curriculumObject) {
-      const response = await axios.put(curriculumObject.API_URL, {
-        Id: curriculumObject.id,
-        Course: curriculumObject.course,
-        Faculty: curriculumObject.faculty,
-        Group: curriculumObject.group,
-        Speciality: curriculumObject.speciality
-      });
+      const curriculums = await curriculumClient.updateCurriculum(router.currentRoute.name, curriculumObject);
 
-      commit("updateCurriculumData", response.data);
+      commit("updateCurriculumData", curriculums);
     }
   },
 
   getters: {
-    validCurriculums(state) {
-      const lowerСaseKeyword = state.keywordSearch.toLowerCase();
-      if (lowerСaseKeyword === "") {
+    curriculums(state) {
+      const keywordInLowerСase = state.keywordSearch.toLowerCase();
+      if (keywordInLowerСase === "") {
         return state.curriculums;
       }
       else {
         return state.curriculums.filter(c => {
-          return c.Faculty?.toLowerCase().includes(lowerСaseKeyword)
-            || c.Speciality?.toLowerCase().includes(lowerСaseKeyword)
-            || c.Course?.toLowerCase().includes(lowerСaseKeyword)
-            || c.Group?.toLowerCase().includes(lowerСaseKeyword);
+          return c.Faculty?.toLowerCase().includes(keywordInLowerСase)
+            || c.Speciality?.toLowerCase().includes(keywordInLowerСase)
+            || c.Course?.toLowerCase().includes(keywordInLowerСase)
+            || c.Group?.toLowerCase().includes(keywordInLowerСase);
         });
       }
     },
 
-    getKeywordSearch(state) {
+    keywordSearch(state) {
       return state.keywordSearch;
     }
   }

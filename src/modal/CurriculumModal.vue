@@ -5,7 +5,7 @@
       class="v-curriculum"
     >
       <div class="v-curriculum__header">
-        <h3>{{ rightButtonTitle }}</h3>
+        <h3>{{ titleModal }}</h3>
         <span>
           <i
             class="material-icons"
@@ -18,7 +18,7 @@
           <div class="input-group">
             <label class="label-group">Факультет:</label>
             <input
-              v-model="faculty"
+              v-model="currentObject.faculty"
               type="text"
               class="form-control"
               placeholder="Введите факультет"
@@ -27,7 +27,7 @@
           <div class="input-group">
             <label class="label-group">Специальность:</label>
             <input
-              v-model="speciality"
+              v-model="currentObject.speciality"
               type="text"
               class="form-control"
               placeholder="Введите специальность"
@@ -36,7 +36,7 @@
           <div class="input-group">
             <label class="label-group">Курс:</label>
             <input
-              v-model="course"
+              v-model="currentObject.course"
               type="text"
               class="form-control"
               placeholder="Введите курс"
@@ -45,7 +45,7 @@
           <div class="input-group">
             <label class="label-group">Группа:</label>
             <input
-              v-model="group"
+              v-model="currentObject.group"
               type="text"
               class="form-control"
               placeholder="Введите группу"
@@ -64,7 +64,7 @@
           class="submit_btn"
           @click="sendRightButton"
         >
-          {{ rightButtonConfirming }}
+          Сохранить
         </button>
       </div>
     </div>
@@ -72,46 +72,35 @@
 </template>
 
 <script>
-import _ from "lodash";
-import dataClient from "../API/dataClient.js";
 import { mapActions } from "vuex";
 
 export default {
   props: {
-    rightButtonTitle: {
+    titleModal: {
       type: String,
       default: "Курс обучения"
     },
 
-    rightButtonConfirming: {
-      type: String,
-      default: "Ок"
-    },
-
     selectedItem: {
       type: Object,
-      required: true
+      default: () => {}
     }
   },
 
   data() {
     return {
-      course: "",
-      faculty: "",
-      group: "",
-      id: 0,
-      speciality: ""
+      currentObject: null
     };
   },
 
-  mounted() {
-    if (!_.isEmpty(this.selectedItem)) {
-      this.id = this.selectedItem.Id;
-      this.course = this.selectedItem.Course;
-      this.faculty = this.selectedItem.Faculty;
-      this.group = this.selectedItem.Group;
-      this.speciality = this.selectedItem.Speciality;
-    }
+  created() {
+    this.currentObject = {
+      faculty: this.selectedItem?.Faculty,
+      id: this.selectedItem?.Id,
+      speciality: this.selectedItem?.Speciality,
+      course: this.selectedItem?.Course,
+      group: this.selectedItem?.Group
+    };
   },
 
   methods: {
@@ -125,20 +114,11 @@ export default {
     },
 
     sendRightButton() {
-      const curriculumObject = {
-        API_URL: dataClient.API_URL + "curriculum",
-        course: this.course,
-        faculty: this.faculty,
-        group: this.group,
-        speciality: this.speciality,
-        id: this.id
-      };
-
-      if (this.rightButtonConfirming === "Создать") {
-        this.createCurriculum(curriculumObject);
+      if (this.currentObject.id) {
+        this.updateCurriculum(this.currentObject);
       }
-      else if (this.rightButtonConfirming === "Сохранить") {
-        this.updateCurriculum(curriculumObject);
+      else {
+        this.createCurriculum(this.currentObject);
       }
       this.sendModalClose();
     }
@@ -209,7 +189,8 @@ button{
   margin-bottom: 7px;
   .form-control {
     width: 380px;
-    border-radius: 2px;
+    border: 1px solid black;
+    border-radius: 5px;
   };
 }
 .label-group{
