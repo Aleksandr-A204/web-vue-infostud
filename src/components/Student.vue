@@ -44,13 +44,13 @@
         >
           <td>{{ student.Id }}</td>
           <td>{{ student.FullName }}</td>
-          <td>{{ student.Address.City }}</td>
-          <td>{{ student.Address.PostIndex }}</td>
-          <td>{{ student.Address.Street }}</td>
-          <td>{{ student.Curriculum.Faculty }}</td>
-          <td>{{ student.Curriculum.Speciality }}</td>
-          <td>{{ student.Curriculum.Course }}</td>
-          <td>{{ student.Curriculum.Group }}</td>
+          <td>{{ student.City }}</td>
+          <td>{{ student.Postindex }}</td>
+          <td>{{ student.Street }}</td>
+          <td>{{ student.Faculty }}</td>
+          <td>{{ student.Speciality }}</td>
+          <td>{{ student.Course }}</td>
+          <td>{{ student.Group }}</td>
           <td>{{ student.Contact.Phone }}</td>
           <td>{{ student.Contact.Email }}</td>
           <td>
@@ -142,7 +142,7 @@ export default {
   methods: {
     ...mapActions({
       deleteStudent: "studentModule/deleteStudent",
-      getStudentData: "studentModule/studentData"
+      getStudentData: "studentModule/getStudentData"
     }),
 
     addStudentClick() {

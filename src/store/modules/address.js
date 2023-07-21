@@ -1,5 +1,5 @@
+import _ from "lodash";
 import AddressClient from "@/API/addressClient";
-import router from "@/route/routes.js";
 
 const addressClient = new AddressClient();
 
@@ -24,14 +24,14 @@ export default {
 
   actions: {
     async createAddress({ commit }, objectAddress) {
-      const addresses = await addressClient.createAddress(router.currentRoute.name, objectAddress);
+      const addresses = await addressClient.createAddress(objectAddress);
 
       commit("updateAddressData", addresses);
     },
 
     async deleteAddress({ commit }, addressId) {
       try {
-        const addresses = await addressClient.deleteAddress(router.currentRoute.name, addressId);
+        const addresses = await addressClient.deleteAddress(addressId);
 
         commit("updateAddressData", addresses);
       }
@@ -41,8 +41,8 @@ export default {
       }
     },
 
-    async addressData({ commit }, routeName = router.currentRoute.name) {
-      const addresses = await addressClient.getAddresses(routeName);
+    async getAddressData({ commit }) {
+      const addresses = await addressClient.getAddresses();
 
       commit("updateAddressData", addresses);
     },
@@ -52,31 +52,40 @@ export default {
     },
 
     async updateAddress({ commit }, objectAddress) {
-      const addresses = await addressClient.updateAddress(router.currentRoute.name, objectAddress);
+      const addresses = await addressClient.updateAddress(objectAddress);
 
       commit("updateAddressData", addresses);
     }
   },
 
   getters: {
-    allAddresses(state) {
-      return state.addresses;
-    },
+    // cities(state){
+    //   return _.map(state.addresses, "City");
+    // },
+
+    // postindexes(state){
+    //   return state.;
+    // },
+
+    // streets(state){
+    //   return state.;
+    // },
 
     keywordSearch(state) {
       return state.keywordSearch;
     },
 
     addresses(state) {
+      console.log(_.map(state.addresses, "City"));
       const wordInLowerCase = state.keywordSearch.toLowerCase();
       if (wordInLowerCase === "") {
         return state.addresses;
       }
       else {
         return state.addresses.filter(a => {
-          return a.City?.toLowerCase().includes(wordInLowerCase)
-          || a.PostIndex?.toLowerCase().includes(wordInLowerCase)
-          || a.Street?.toLowerCase().includes(wordInLowerCase);
+          return a.City.City?.toLowerCase().includes(wordInLowerCase)
+          || a.Postindex.Postindex?.toLowerCase().includes(wordInLowerCase)
+          || a.Street.Street?.toLowerCase().includes(wordInLowerCase);
         });
       }
     }

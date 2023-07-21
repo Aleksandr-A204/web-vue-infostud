@@ -1,4 +1,3 @@
-import router from "@/route/routes";
 import StudentClient from "@/API/studentClient.js";
 
 const studentClient = new StudentClient();
@@ -23,15 +22,15 @@ export default {
   },
 
   actions: {
-    async createStudent({ commit }, studentObject) {
-      const students = await studentClient.addNewStudent(router.currentRoute.name, studentObject);
+    async createStudent({ commit }) {
+      const students = await studentClient.addNewStudent();
 
       commit("updateStudentData", students);
     },
 
-    async deleteStudent({ commit }, studentId) {
+    async deleteStudent({ commit }) {
       try {
-        const students = await studentClient.deleteStudent(router.currentRoute.name, studentId);
+        const students = await studentClient.deleteStudent();
 
         commit("updateStudentData", students);
       }
@@ -41,8 +40,8 @@ export default {
       }
     },
 
-    async studentData({ commit }) {
-      const students = await studentClient.getStudents(router.currentRoute.name);
+    async getStudentData({ commit }) {
+      const students = await studentClient.getStudents();
 
       commit("updateStudentData", students);
     },
@@ -51,8 +50,8 @@ export default {
       commit("updateSearchKeyword", keywordSearch);
     },
 
-    async updateStudent({ commit }, studentObject) {
-      const students = await studentClient.updateStudent(router.currentRoute.name, studentObject);
+    async updateStudent({ commit }) {
+      const students = await studentClient.updateStudent();
 
       commit("updateStudentData", students);
     }
@@ -71,13 +70,13 @@ export default {
       else {
         return state.students.filter(s => {
           return s.FullName?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Address.City?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Address.PostIndex?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Address.Street?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Curriculum.Faculty?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Curriculum.Speciality?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Curriculum.Course?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Curriculum.Group?.toLowerCase().includes(lowerСaseKeyword)
+            || s.City?.toLowerCase().includes(lowerСaseKeyword)
+            || s.PostIndex?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Street?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Faculty?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Speciality?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Course?.toLowerCase().includes(lowerСaseKeyword)
+            || s.Group?.toLowerCase().includes(lowerСaseKeyword)
             || s.Contact.Phone?.toLowerCase().includes(lowerСaseKeyword)
             || s.Contact.Email?.toLowerCase().includes(lowerСaseKeyword);
         });

@@ -36,9 +36,9 @@
           :key="address.id"
         >
           <td>{{ address.Id }}</td>
-          <td>{{ address.City }}</td>
-          <td>{{ address.PostIndex }}</td>
-          <td>{{ address.Street }}</td>
+          <td>{{ address.City.City }}</td>
+          <td>{{ address.Postindex.PostIndex }}</td>
+          <td>{{ address.Street.Street }}</td>
           <td>
             <div class="btn-option">
               <button
@@ -126,7 +126,7 @@ export default {
   methods: {
     ...mapActions({
       deleteAddress: "addressModule/deleteAddress",
-      getAddressData: "addressModule/addressData"
+      getAddressData: "addressModule/getAddressData"
     }),
 
     addStudentClick() {

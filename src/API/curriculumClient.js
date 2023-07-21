@@ -3,8 +3,8 @@ import axios from "axios";
 const API_URL = "http://localhost:5053/api";
 
 class CurriculumClient {
-  async createCurriculum(routeName, curriculumObject) {
-    const responce = await axios.post(`${API_URL}/${routeName}`, {
+  async createCurriculum(curriculumObject) {
+    const responce = await axios.post(`${API_URL}/curriculum`, {
       Course: curriculumObject.course,
       Faculty: curriculumObject.faculty,
       Group: curriculumObject.group,
@@ -14,19 +14,20 @@ class CurriculumClient {
     return responce.data;
   }
 
-  async deleteCurriculum(routeName, curriculumId) {
-    const responce = await axios.delete(`${API_URL}/${routeName}/${curriculumId}`);
+  async deleteCurriculum(curriculumId) {
+    const responce = await axios.delete(`${API_URL}/curriculum/${curriculumId}`);
 
     return responce.data;
   }
 
-  async getCurriculum(routeName) {
-    const responce = await axios.get(`${API_URL}/${routeName}`);
+  async getCurriculum() {
+    const responce = await axios.get(`${API_URL}/curriculum`);
+
     return responce.data;
   }
 
-  async updateCurriculum(routeName, curriculumObject) {
-    const responce = await axios.put(`${API_URL}/${routeName}`, {
+  async updateCurriculum(curriculumObject) {
+    const responce = await axios.put(`${API_URL}/curriculum`, {
       Course: curriculumObject.course,
       Faculty: curriculumObject.faculty,
       Id: curriculumObject.id,

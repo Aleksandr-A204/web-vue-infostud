@@ -26,14 +26,7 @@
           </div>
           <div class="input-group">
             <label class="form-label">Город:</label>
-            <input
-              id="inputOne"
-              type="text"
-              class="form-control"
-              size="8"
-            >
-            <select class="form-select__popur-list" />
-            <!-- <select
+            <select
               v-model="currentObject.address.city"
               class="form-select"
             >
@@ -41,19 +34,13 @@
                 v-for="address in addresses"
                 :key="address.id"
               >
-                {{ address.City }}
+                {{ address.City.City }}
               </option>
-            </select> -->
+            </select>
           </div>
           <div class="input-group">
             <label class="form-label">Почтовый индекс:</label>
-            <input
-              type="text"
-              class="form-control"
-              size="8"
-            >
-            <select class="form-select__popur-list" />
-            <!-- <select
+            <select
               v-model="currentObject.address.postindex"
               class="form-select"
             >
@@ -61,19 +48,13 @@
                 v-for="address in addresses"
                 :key="address.id"
               >
-                {{ address.PostIndex }}
+                {{ address.Postindex.PostIndex }}
               </option>
-            </select> -->
+            </select>
           </div>
           <div class="input-group">
             <label class="form-label">Улица:</label>
-            <input
-              type="text"
-              class="form-control"
-              size="8"
-            >
-            <select class="form-select__popur-list" />
-            <!-- <select
+            <select
               v-model="currentObject.address.street"
               class="form-select"
             >
@@ -81,9 +62,9 @@
                 v-for="address in addresses"
                 :key="address.id"
               >
-                {{ address.Street }}
+                {{ address.Street.Street }}
               </option>
-            </select> -->
+            </select>
           </div>
           <div class="input-group">
             <label class="form-label">Факультет:</label>
@@ -95,7 +76,7 @@
                 v-for="curriculum in curriculums"
                 :key="curriculum.id"
               >
-                {{ curriculum.Faculty }}
+                {{ curriculum.Faculty.Faculty }}
               </option>
             </select>
           </div>
@@ -109,7 +90,7 @@
                 v-for="curriculum in curriculums"
                 :key="curriculum.id"
               >
-                {{ curriculum.Speciality }}
+                {{ curriculum.Speciality.Speciality }}
               </option>
             </select>
           </div>
@@ -120,29 +101,38 @@
               class="form-select"
             >
               <option
-                v-for="course in uniqCourses"
-                :key="course.id"
+                v-for="curriculum in curriculums"
+                :key="curriculum.id"
               >
-                {{ course }}
+                {{ curriculum.Course.Course }}
               </option>
             </select>
           </div>
           <div class="input-group">
             <label class="form-label">Группа:</label>
-            <input
-              id="inputTwo"
-              type="text"
-              class="form-control"
-              placeholder="Введите группу"
-              size="8"
-            >
-            <select class="form-select__popur-list" />
-            <!-- <input
-              v-model="currentObject.curriculum.group"
-              type="text"
-              class="form-control"
-              placeholder="Введите группу"
-            > -->
+
+            <div class="search-box">
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Введите группу"
+              >
+              <table
+                class="popur-list hidden"
+                @click="chooseItem"
+              >
+                <tbody>
+                  <tr
+                    v-for="curriculum in curriculums"
+                    :key="curriculum.id"
+                  >
+                    <td class="rows-box">
+                      {{ curriculum.Group.Group }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div class="input-group">
             <label class="form-label">Номер телефона:</label>
@@ -183,8 +173,7 @@
 </template>
 
 <script>
-import _ from "lodash";
-import router from "@/route/routes";
+//import _ from "lodash";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -202,18 +191,19 @@ export default {
 
   data() {
     return {
-      currentObject: null,
-      uniqCourses: []
+      currentObject: null
     };
   },
 
   computed: {
     ...mapGetters({
-      addresses: "addressModule/addresses",
-      curriculums: "curriculumModule/curriculums"
+      // cities: "addressModule/cities",
+      // postindexes: "addressModule/postindexes",
+      // streets: "addressModule/streets",
+      curriculums: "curriculumModule/curriculums",
+      groups: "curriculumModule/groups"
+      // setWordByCourseList: "curriculumModule/wordByCourseList"
     })
-
-
   },
 
   created() {
@@ -236,22 +226,36 @@ export default {
       fullname: this.studentObject?.FullName,
       id: this.studentObject?.Id
     };
+
+    this.$store.dispatch("curriculumModule/wordByCourseList", this.currentObject.curriculum.group ?? "");
   },
 
   async mounted() {
-    await this.getAddressData(router.options.routes[1].name);
-    await this.getCurriculumData(router.options.routes[2].name);
+    await this.getAddressData();
+    await this.getCurriculumData();
 
-    this.uniqCourses = await _.uniq(_.map(this.curriculums, "Course")).toSorted();
+
+    // this.courses = await _.uniq(_.map(this.curriculums, "Course")).toSorted();
+    // this.facultes = await _.uniq(_.map(this.curriculums, "Faculty"));
+    // this.specialites = await _.uniq(_.map(this.curriculums, "Speciality"));
+
+    // //this.cites = await _.uniq(_.map(this.addresses, "City"));
+    // this.postindexes = await _.uniq(_.map(this.addresses, "PostIndex"));
+    // this.streets = await _.uniq(_.map(this.addresses, "Street"));
+    console.log(this.addresses);
   },
 
   methods: {
     ...mapActions({
-      getAddressData: "addressModule/addressData",
+      getAddressData: "addressModule/getAddressData",
       getCurriculumData: "curriculumModule/curriculumData",
       createStudent: "studentModule/createStudent",
       updateStudent: "studentModule/updateStudent"
     }),
+
+    chooseItem(event) {
+      this.$store.dispatch("curriculumModule/wordByCourseList", event.target.innerHTML.trim());
+    },
 
     sendModalClose() {
       this.$emit("closeModal");
@@ -266,6 +270,10 @@ export default {
       }
       this.sendModalClose();
     }
+
+    // setWordByCourseList(event) {
+    //   this.$store.dispatch("curriculumModule/wordByCourseList", event.target.value.trim());
+    // }
   }
 };
 </script>
@@ -281,8 +289,7 @@ export default {
   left: 0;
   top: 0;
   bottom: 0;
-}
-.v-student{
+  .v-student{
     padding: 16px;
     position: fixed;
     background: white;
@@ -300,56 +307,85 @@ export default {
         }
     };
     &__content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .input-group {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-    };
-}
-i:hover{
-  cursor: pointer;
-}
-button{
-  background-color: #87CEEB;
-  border: 1px;
-  border-style: solid;
-  border-radius: 7px;
-  box-sizing: border-box;
-  color: black;
-  text-align: center;
-  height: 25px;
-  margin: 1px;
-    &:hover {
-    background: #1915f7;
+        margin-bottom: 7px;
+        font-size: 14px;
+        .form-label{
+          margin-right: 2px;
+        }
+        .form-control {
+          width: 320px;
+          border: 1px solid black;
+          border-radius: 5px;
+          padding: 1px 1px 1px 3px;
+        }
+        .form-select{
+          width: 326.21px;
+          border: 1px solid black;
+          border-radius: 5px;
+          cursor: pointer;
+          color: #000;
+        }
+        .search-box{
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          justify-content: center;
+          position: relative;
+          .hidden{
+            display: none;
+          }
+          .popur-list{
+            position: absolute;
+            top: 100%;
+            width: 100%;
+            border-collapse: collapse;
+            cursor: default;
+            background: white;
+            border: 1px solid gray;
+            .rows-box{
+              min-width: 320px;
+              font-weight: normal;
+              min-height: 1.2em;
+              &:hover {
+                background: #1915f7;
+                color: white;
+              }
+            }
+          }
+          &:hover .popur-list{
+            display: block;
+          }
+        }
+      }
+    }
+  }
+  i:hover{
+    cursor: pointer;
+  }
+  button{
+    background-color: #87CEEB;
     border: 1px;
     border-style: solid;
-    border-color: #000;
-    color: white;
-  }
-}
-.input-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 7px;
-  .form-control {
-    width: 320px;
-    border: 1px solid black;
-    border-radius: 5px;
-  }
-  .form-select{
-    width: 326.21px;
-    border: 1px solid black;
-    border-radius: 5px;
-    padding: 1px 2px;
-    &__popur-list{
-      position: absolute;
-    }
-      option[default] {
-      display: none;
+    border-radius: 7px;
+    box-sizing: border-box;
+    color: black;
+    text-align: center;
+    height: 25px;
+    margin: 1px;
+      &:hover {
+      background: #1915f7;
+      border: 1px;
+      border-style: solid;
+      border-color: #000;
+      color: white;
     }
   }
-}
-.form-label{
-  margin-right: 2px;
 }
 </style>

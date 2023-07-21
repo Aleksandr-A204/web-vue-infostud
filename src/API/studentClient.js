@@ -3,24 +3,21 @@ import axios from "axios";
 const API_URL = "http://localhost:5053/api";
 
 class StudentClient {
-  async getStudents(routeName) {
-    const response = await axios.get(`${API_URL}/${routeName}`);
+  async getStudents() {
+    const response = await axios.get(`${API_URL}/student`);
+
     return response.data;
   }
 
-  async addNewStudent(routeName, newStudent) {
-    const responce = await axios.post(`${API_URL}/${routeName}`, {
-      Address: {
-        City: newStudent.address.city,
-        PostIndex: newStudent.address.postindex,
-        Street: newStudent.address.street
-      },
-      Curriculum: {
-        Course: newStudent.curriculum.course,
-        Faculty: newStudent.curriculum.faculty,
-        Group: newStudent.curriculum.group,
-        Speciality: newStudent.curriculum.speciality
-      },
+  async addNewStudent(newStudent) {
+    const responce = await axios.post(`${API_URL}/student`, {
+      City: newStudent.address.city,
+      Postindex: newStudent.address.postindex,
+      Street: newStudent.address.street,
+      Course: newStudent.curriculum.course,
+      Faculty: newStudent.curriculum.faculty,
+      Group: newStudent.curriculum.group,
+      Speciality: newStudent.curriculum.speciality,
       Contact: {
         Email: newStudent.contact.email,
         Phone: newStudent.contact.phone
@@ -31,14 +28,14 @@ class StudentClient {
     return responce.data;
   }
 
-  async deleteStudent(routeName, studentId) {
-    const responce = await axios.delete(`${API_URL}/${routeName}/${studentId}`);
+  async deleteStudent(studentId) {
+    const responce = await axios.delete(`${API_URL}/student/${studentId}`);
 
     return responce.data;
   }
 
-  async updateStudent(routeName, editedStudent) {
-    const response = await axios.put(`${API_URL}/${routeName}`, {
+  async updateStudent(editedStudent) {
+    const response = await axios.put(`${API_URL}/student`, {
       Address: {
         City: editedStudent.address.city,
         PostIndex: editedStudent.address.postindex,

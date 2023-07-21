@@ -38,10 +38,10 @@
           :key="curriculum.id"
         >
           <td>{{ curriculum.Id }}</td>
-          <td>{{ curriculum.Faculty }}</td>
-          <td>{{ curriculum.Speciality }}</td>
-          <td>{{ curriculum.Course }}</td>
-          <td>{{ curriculum.Group }}</td>
+          <td>{{ curriculum.Faculty.Faculty }}</td>
+          <td>{{ curriculum.Speciality.Speciality }}</td>
+          <td>{{ curriculum.Course.Course }}</td>
+          <td>{{ curriculum.Group.Group }}</td>
           <td>
             <div class="btn-option">
               <button

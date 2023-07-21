@@ -1,3 +1,4 @@
+import _ from "lodash";
 import CurriculumClient from "@/API/curriculumClient.js";
 import router from "@/route/routes";
 
@@ -9,7 +10,8 @@ export default {
 
   state: {
     curriculums: [],
-    keywordSearch: ""
+    keywordSearch: "",
+    wordByCourseList: ""
   },
 
   mutations: {
@@ -19,6 +21,10 @@ export default {
 
     updateKeywordSearch(state, keywordSearch) {
       state.keywordSearch = keywordSearch;
+    },
+
+    wordByCourseList(state, value) {
+      state.wordByCourseList = value;
     }
   },
 
@@ -55,6 +61,10 @@ export default {
       const curriculums = await curriculumClient.updateCurriculum(router.currentRoute.name, curriculumObject);
 
       commit("updateCurriculumData", curriculums);
+    },
+
+    wordByCourseList({ commit }, value) {
+      commit("wordByCourseList", value);
     }
   },
 
@@ -66,16 +76,33 @@ export default {
       }
       else {
         return state.curriculums.filter(c => {
-          return c.Faculty?.toLowerCase().includes(keywordInLowerСase)
-            || c.Speciality?.toLowerCase().includes(keywordInLowerСase)
-            || c.Course?.toLowerCase().includes(keywordInLowerСase)
-            || c.Group?.toLowerCase().includes(keywordInLowerСase);
+          return c.Faculty.Faculty?.toLowerCase().includes(keywordInLowerСase)
+            || c.Speciality.Faculty?.toLowerCase().includes(keywordInLowerСase)
+            || c.Course.Faculty?.toLowerCase().includes(keywordInLowerСase)
+            || c.Group.Faculty?.toLowerCase().includes(keywordInLowerСase);
+        });
+      }
+    },
+
+    groups(state) {
+      const courseList = _.uniq(_.map(state.curriculums, "Group"));
+      const wordBYCourse = state.wordByCourseList.toLowerCase();
+      if (wordBYCourse === "") {
+        return courseList;
+      }
+      else {
+        return courseList.filter(c => {
+          return c?.toLowerCase().includes(wordBYCourse);
         });
       }
     },
 
     keywordSearch(state) {
       return state.keywordSearch;
+    },
+
+    wordByCourseList(state) {
+      return state.wordByCourseList;
     }
   }
 };

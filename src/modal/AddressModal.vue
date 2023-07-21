@@ -17,30 +17,54 @@
         <div>
           <div class="input-group">
             <label class="label-group">Город:</label>
-            <input
+            <!-- <input
               v-model="currentObject.city"
               type="text"
               class="form-control"
               placeholder="Введите город"
-            >
+            > -->
+            <select v-model="currentObject.city">
+              <option
+                v-for="city in cities"
+                :key="city.id"
+              >
+                {{ city.City }}
+              </option>
+            </select>
           </div>
           <div class="input-group">
             <label class="label-group">Почтовый индекс:</label>
-            <input
+            <!-- <input
               v-model="currentObject.postindex"
               type="text"
               class="form-control"
               placeholder="Введите почтовый индекс"
-            >
+            > -->
+            <select v-model="currentObject.postindex">
+              <option
+                v-for="postindex in postindexes"
+                :key="postindex.id"
+              >
+                {{ postindex.PostIndex }}
+              </option>
+            </select>
           </div>
           <div class="input-group">
             <label class="label-group">Улица:</label>
-            <input
+            <!-- <input
               v-model="currentObject.street"
               type="text"
               class="form-control"
               placeholder="Введите улицу"
-            >
+            > -->
+            <select v-model="currentObject.street">
+              <option
+                v-for="street in streets"
+                :key="street.id"
+              >
+                {{ street.Street }}
+              </option>
+            </select>
           </div>
         </div>
       </div>
@@ -63,7 +87,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   props: {
@@ -84,6 +108,14 @@ export default {
     };
   },
 
+  computed: {
+    ...mapGetters({
+      streets: "streetModule/streets",
+      cities: "cityModule/cities",
+      postindexes: "postindexModule/postindexes"
+    })
+  },
+
   created() {
     this.currentObject = {
       city: this.addressObject?.City,
@@ -93,8 +125,17 @@ export default {
     };
   },
 
+  async mounted() {
+    await this.getCityData();
+    await this.getPostindexData();
+    await this.getStreetData();
+  },
+
   methods: {
     ...mapActions({
+      getCityData: "cityModule/getCityData",
+      getPostindexData: "postindexModule/getPostindexData",
+      getStreetData: "streetModule/getStreetData",
       createAddress: "addressModule/createAddress",
       updateAddress: "addressModule/updateAddress"
     }),
@@ -182,6 +223,13 @@ button{
     border: 1px solid black;
     border-radius: 5px;
   };
+  select {
+    width: 326.21px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #000;
+  }
 }
 .label-group{
   margin-right: 2px;

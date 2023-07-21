@@ -1,5 +1,4 @@
 import ContactClient from "@/API/contactClient.js";
-import router from "@/route/routes";
 
 const contactClient = new ContactClient();
 
@@ -24,14 +23,14 @@ export default {
 
   actions: {
     async createContact({ commit }, object) {
-      const contacts = await contactClient.createContact(router.currentRoute.name, object);
+      const contacts = await contactClient.addContact(object);
 
       commit("updateContactData", contacts);
     },
 
     async deleteContact({ commit }, contactId) {
       try {
-        const contacts = await contactClient.deleteContact(router.currentRoute.name, contactId);
+        const contacts = await contactClient.deleteContact(contactId);
 
         commit("updateContactData", contacts);
       }
@@ -42,7 +41,7 @@ export default {
     },
 
     async allContacts({ commit }) {
-      const contacts = await contactClient.getContactData(router.currentRoute.name);
+      const contacts = await contactClient.getContactData();
 
       commit("updateContactData", contacts);
     },
@@ -52,7 +51,7 @@ export default {
     },
 
     async updateContact({ commit }, object) {
-      const contacts = await contactClient.updateContact(router.currentRoute.name, object);
+      const contacts = await contactClient.updateContact(object);
 
       commit("updateContactData", contacts);
     }
