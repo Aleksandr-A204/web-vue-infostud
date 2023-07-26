@@ -15,132 +15,154 @@
       </div>
       <div class="v-student__content">
         <div class="student-component">
+          <p>Студент</p>
           <div class="input-group">
             <label class="form-label">ФИО:</label>
             <input
               v-model="currentObject.fullname"
               type="text"
               class="form-control"
-              placeholder="Введите ФИО"
             >
           </div>
+          <p>Адрес</p>
           <div class="input-group">
             <label class="form-label">Город:</label>
             <select
               v-model="currentObject.address.city"
               class="form-select"
+              @click="clickBoxCity"
             >
               <option
-                v-for="address in addresses"
-                :key="address.id"
+                v-for="c in cities"
+                :key="c.id"
               >
-                {{ address.City.City }}
+                {{ c.City }}
               </option>
             </select>
           </div>
-          <div class="input-group">
+          <div
+            v-if="currentObject.address.city"
+            class="input-group"
+          >
+            <label class="form-label">Улица:</label>
+            <select
+              v-model="currentObject.address.street"
+              class="form-select"
+              @click="clickBoxStreet"
+            >
+              <option
+                v-for="s in streets"
+                :key="s.id"
+              >
+                {{ s.Street }}
+              </option>
+            </select>
+          </div>
+          <div
+            v-if="currentObject.address.street"
+            class="input-group"
+          >
             <label class="form-label">Почтовый индекс:</label>
             <select
               v-model="currentObject.address.postindex"
               class="form-select"
             >
               <option
-                v-for="address in addresses"
-                :key="address.id"
+                v-for="postindex in postindexes"
+                :key="postindex.id"
               >
-                {{ address.Postindex.PostIndex }}
+                {{ postindex.PostIndex }}
               </option>
             </select>
           </div>
-          <div class="input-group">
-            <label class="form-label">Улица:</label>
-            <select
-              v-model="currentObject.address.street"
-              class="form-select"
-            >
-              <option
-                v-for="address in addresses"
-                :key="address.id"
-              >
-                {{ address.Street.Street }}
-              </option>
-            </select>
-          </div>
+          <p>Учебный план</p>
           <div class="input-group">
             <label class="form-label">Факультет:</label>
             <select
               v-model="currentObject.curriculum.faculty"
               class="form-select"
+              @click="clickBoxFaculty"
             >
               <option
-                v-for="curriculum in curriculums"
-                :key="curriculum.id"
+                v-for="f in faculties"
+                :key="f.id"
               >
-                {{ curriculum.Faculty.Faculty }}
+                {{ f.Faculty }}
               </option>
             </select>
           </div>
-          <div class="input-group">
+          <div
+            v-if="currentObject.curriculum.faculty"
+            class="input-group"
+          >
             <label class="form-label">Специальность:</label>
             <select
               v-model="currentObject.curriculum.speciality"
               class="form-select"
+              @click="clickBoxSpeciality"
             >
               <option
-                v-for="curriculum in curriculums"
-                :key="curriculum.id"
+                v-for="s in specialities"
+                :key="s.id"
               >
-                {{ curriculum.Speciality.Speciality }}
+                {{ s.Speciality }}
               </option>
             </select>
           </div>
-          <div class="input-group">
+          <div
+            v-if="currentObject.curriculum.speciality"
+            class="input-group"
+          >
             <label class="form-label">Курс:</label>
             <select
               v-model="currentObject.curriculum.course"
               class="form-select"
+              @click="clickBoxCourse"
             >
               <option
-                v-for="curriculum in curriculums"
-                :key="curriculum.id"
+                v-for="c in courses"
+                :key="c.id"
               >
-                {{ curriculum.Course.Course }}
+                {{ c.Course }}
               </option>
             </select>
           </div>
-          <div class="input-group">
+          <div
+            v-if="currentObject.curriculum.course"
+            class="input-group"
+          >
             <label class="form-label">Группа:</label>
-
             <div class="search-box">
               <input
+                :value="currentObject.curriculum.group = getWordByGroup"
                 class="form-control"
                 type="text"
-                placeholder="Введите группу"
+                @input="setWordByGroup"
               >
               <table
                 class="popur-list hidden"
-                @click="chooseItem"
               >
                 <tbody>
                   <tr
-                    v-for="curriculum in curriculums"
-                    :key="curriculum.id"
+                    v-for="g in groups"
+                    :key="g.id"
+                    @click="eventPopurList"
                   >
                     <td class="rows-box">
-                      {{ curriculum.Group.Group }}
+                      {{ g.Group }}
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
+          <p>Контакт</p>
           <div class="input-group">
             <label class="form-label">Номер телефона:</label>
             <input
               v-model="currentObject.contact.phone"
               type="text"
               class="form-control"
-              placeholder="Введите телефон"
             >
           </div>
           <div class="input-group">
@@ -149,7 +171,6 @@
               v-model="currentObject.contact.email"
               type="text"
               class="form-control"
-              placeholder="Введите эл. почту"
             >
           </div>
         </div>
@@ -173,7 +194,6 @@
 </template>
 
 <script>
-//import _ from "lodash";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -191,33 +211,43 @@ export default {
 
   data() {
     return {
-      currentObject: null
+      currentObject: null,
+      showBlock: {
+        street: false
+      }
     };
   },
 
   computed: {
     ...mapGetters({
-      // cities: "addressModule/cities",
-      // postindexes: "addressModule/postindexes",
-      // streets: "addressModule/streets",
+      addresses: "addressModule/addresses",
+      cities: "addressModule/cities",
+      city: "addressModule/getCity",
+      courses: "curriculumModule/courses",
       curriculums: "curriculumModule/curriculums",
-      groups: "curriculumModule/groups"
-      // setWordByCourseList: "curriculumModule/wordByCourseList"
+      faculty: "curriculumModule/getFaculty",
+      faculties: "curriculumModule/faculties",
+      getWordByGroup: "curriculumModule/wordByGroup",
+      groups: "curriculumModule/groups",
+      postindexes: "addressModule/postindexes",
+      specialities: "curriculumModule/specialities",
+      street: "addressModule/getStreet",
+      streets: "addressModule/streets"
     })
   },
 
   created() {
     this.currentObject = {
       address: {
-        city: this.studentObject?.Address.City,
-        postindex: this.studentObject?.Address.PostIndex,
-        street: this.studentObject?.Address.Street
+        city: this.studentObject?.City,
+        postindex: this.studentObject?.Postindex,
+        street: this.studentObject?.Street
       },
       curriculum: {
-        faculty: this.studentObject?.Curriculum.Faculty,
-        speciality: this.studentObject?.Curriculum.Speciality,
-        course: this.studentObject?.Curriculum.Course,
-        group: this.studentObject?.Curriculum.Group
+        faculty: this.studentObject?.Faculty,
+        speciality: this.studentObject?.Speciality,
+        course: this.studentObject?.Course,
+        group: this.studentObject?.Group
       },
       contact: {
         phone: this.studentObject?.Contact.Phone,
@@ -227,34 +257,78 @@ export default {
       id: this.studentObject?.Id
     };
 
-    this.$store.dispatch("curriculumModule/wordByCourseList", this.currentObject.curriculum.group ?? "");
+    this.$store.dispatch("curriculumModule/wordByGroup", this.currentObject.curriculum.group ?? "");
   },
 
   async mounted() {
     await this.getAddressData();
     await this.getCurriculumData();
-
-
-    // this.courses = await _.uniq(_.map(this.curriculums, "Course")).toSorted();
-    // this.facultes = await _.uniq(_.map(this.curriculums, "Faculty"));
-    // this.specialites = await _.uniq(_.map(this.curriculums, "Speciality"));
-
-    // //this.cites = await _.uniq(_.map(this.addresses, "City"));
-    // this.postindexes = await _.uniq(_.map(this.addresses, "PostIndex"));
-    // this.streets = await _.uniq(_.map(this.addresses, "Street"));
-    console.log(this.addresses);
   },
 
   methods: {
     ...mapActions({
       getAddressData: "addressModule/getAddressData",
       getCurriculumData: "curriculumModule/curriculumData",
-      createStudent: "studentModule/createStudent",
+      addNewStudent: "studentModule/addNewStudent",
       updateStudent: "studentModule/updateStudent"
     }),
 
-    chooseItem(event) {
-      this.$store.dispatch("curriculumModule/wordByCourseList", event.target.innerHTML.trim());
+    eventPopurList(event) {
+      this.$store.dispatch("curriculumModule/wordByGroup", event.target.innerText);
+
+      event.srcElement.offsetParent.classList.toggle("hidden", true);
+    },
+
+    clickBoxCity(event) {
+      if (!event.pointerId) {
+        if (event.target.value !== this.city) {
+          this.currentObject.address.street = null;
+          this.currentObject.address.postindex = null;
+        }
+        this.$store.dispatch("addressModule/setCity", event.target.value);
+      }
+    },
+
+    clickBoxStreet(event) {
+      if (!event.pointerId) {
+        if (event.target.value !== this.street) {
+          this.currentObject.address.postindex = null;
+        }
+        this.$store.dispatch("addressModule/setStreet", event.target.value);
+      }
+    },
+
+    clickBoxFaculty(event) {
+      if (!event.pointerId) {
+        if (event.target.value !== this.faculty) {
+          this.currentObject.curriculum.speciality = null;
+          this.currentObject.curriculum.course = null;
+          this.$store.dispatch("curriculumModule/wordByGroup", "");
+        }
+
+        this.$store.dispatch("curriculumModule/setFaculty", event.target.value);
+      }
+    },
+
+    clickBoxSpeciality(event) {
+      if (!event.pointerId) {
+        if (event.target.value !== this.speciality) {
+          this.currentObject.curriculum.course = null;
+          this.$store.dispatch("curriculumModule/wordByGroup", "");
+        }
+
+        this.$store.dispatch("curriculumModule/setSpeciality", event.target.value);
+      }
+    },
+
+    clickBoxCourse(event) {
+      if (!event.pointerId) {
+        if (event.target.value !== this.course) {
+          this.$store.dispatch("curriculumModule/wordByGroup", "");
+        }
+
+        this.$store.dispatch("curriculumModule/setCourse", event.target.value);
+      }
     },
 
     sendModalClose() {
@@ -266,14 +340,17 @@ export default {
         this.updateStudent(this.currentObject);
       }
       else {
-        this.createStudent(this.currentObject);
+        this.addNewStudent(this.currentObject);
       }
       this.sendModalClose();
-    }
+    },
 
-    // setWordByCourseList(event) {
-    //   this.$store.dispatch("curriculumModule/wordByCourseList", event.target.value.trim());
-    // }
+    setWordByGroup(event) {
+      const tableElement = event.target.nextElementSibling.classList;
+      event.target.value === "" ? tableElement.toggle("hidden", true) : tableElement.toggle("hidden", false);
+
+      this.$store.dispatch("curriculumModule/wordByGroup", event.target.value);
+    }
   }
 };
 </script>
@@ -295,9 +372,9 @@ export default {
     background: white;
     border: 1px solid black;
     border-radius: 7px;
-    box-shadow: 0 0 17px 0 rgb(161, 161, 161);
+    box-shadow: 0 0 20px 0 black;
     width: 600px;
-    z-index: 10;
+    // z-index: 10;
     &__header, &__footer {
         display: flex;
         justify-content: space-between;
@@ -310,6 +387,15 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+      p {
+        color: gray;
+        font-size: 19px;
+        font-style: italic;
+        margin-bottom: 5px;
+        margin-top: 10px;
+        text-decoration: underline;
+        text-align: right;
+      };
       .input-group {
         display: flex;
         justify-content: space-between;
@@ -320,17 +406,20 @@ export default {
           margin-right: 2px;
         }
         .form-control {
+          height: 15px;
           width: 320px;
           border: 1px solid black;
           border-radius: 5px;
           padding: 1px 1px 1px 3px;
+          text-align: left;
         }
         .form-select{
-          width: 326.21px;
           border: 1px solid black;
           border-radius: 5px;
           cursor: pointer;
           color: #000;
+          height: 19.2px;
+          width: 326.21px;
         }
         .search-box{
           display: flex;
@@ -338,9 +427,6 @@ export default {
           flex-direction: column;
           justify-content: center;
           position: relative;
-          .hidden{
-            display: none;
-          }
           .popur-list{
             position: absolute;
             top: 100%;
@@ -359,8 +445,8 @@ export default {
               }
             }
           }
-          &:hover .popur-list{
-            display: block;
+          .hidden{
+            display: none;
           }
         }
       }

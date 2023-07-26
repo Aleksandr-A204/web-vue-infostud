@@ -9,6 +9,8 @@ export default {
 
   state: {
     addresses: [],
+    city: null,
+    street: null,
     keywordSearch: ""
   },
 
@@ -17,12 +19,26 @@ export default {
       state.addresses = allAddresses;
     },
 
+    updateCity(state, value) {
+      state.city = value;
+    },
+
+    updateStreet(state, value) {
+      state.street = value;
+    },
+
     updateKeywordSearch(state, keywordSearch) {
       state.keywordSearch = keywordSearch;
     }
   },
 
   actions: {
+    async getAddressData({ commit }) {
+      const addresses = await addressClient.getAddresses();
+
+      commit("updateAddressData", addresses);
+    },
+
     async createAddress({ commit }, objectAddress) {
       const addresses = await addressClient.createAddress(objectAddress);
 
@@ -41,10 +57,12 @@ export default {
       }
     },
 
-    async getAddressData({ commit }) {
-      const addresses = await addressClient.getAddresses();
+    setCity({ commit }, value) {
+      commit("updateCity", value);
+    },
 
-      commit("updateAddressData", addresses);
+    setStreet({ commit }, value) {
+      commit("updateStreet", value);
     },
 
     keywordSearch({ commit }, keywordSearch) {
@@ -59,24 +77,7 @@ export default {
   },
 
   getters: {
-    // cities(state){
-    //   return _.map(state.addresses, "City");
-    // },
-
-    // postindexes(state){
-    //   return state.;
-    // },
-
-    // streets(state){
-    //   return state.;
-    // },
-
-    keywordSearch(state) {
-      return state.keywordSearch;
-    },
-
     addresses(state) {
-      console.log(_.map(state.addresses, "City"));
       const wordInLowerCase = state.keywordSearch.toLowerCase();
       if (wordInLowerCase === "") {
         return state.addresses;
@@ -88,6 +89,40 @@ export default {
           || a.Street.Street?.toLowerCase().includes(wordInLowerCase);
         });
       }
+    },
+
+    cities(state) {
+      return _.uniqBy(_.map(state.addresses, "City"), "City");
+    },
+
+    getCity(state) {
+      return state.city;
+    },
+
+    getStreet(state) {
+      return state.street;
+    },
+
+    postindexes(state) {
+      if (state.street) {
+        return _.uniqBy(_.map(_.filter(state.addresses, { City: { City: state.city }, Street: { Street: state.street } }), "Postindex"), "PostIndex");
+      }
+      else {
+        return _.uniqBy(_.map(state.addresses, "Postindex"), "PostIndex");
+      }
+    },
+
+    streets(state) {
+      if (state.city) {
+        return _.uniqBy(_.map(_.filter(state.addresses, { City: { City: state.city } }), "Street"), "Street");
+      }
+      else {
+        return _.uniqBy(_.map(state.addresses, "Street"), "Street");
+      }
+    },
+
+    keywordSearch(state) {
+      return state.keywordSearch;
     }
   }
 };

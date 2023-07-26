@@ -22,15 +22,15 @@ export default {
   },
 
   actions: {
-    async createStudent({ commit }) {
-      const students = await studentClient.addNewStudent();
+    async addNewStudent({ commit }, student) {
+      const students = await studentClient.addNewStudent(student);
 
       commit("updateStudentData", students);
     },
 
-    async deleteStudent({ commit }) {
+    async deleteStudent({ commit }, studentId) {
       try {
-        const students = await studentClient.deleteStudent();
+        const students = await studentClient.deleteStudent(studentId);
 
         commit("updateStudentData", students);
       }
@@ -50,8 +50,8 @@ export default {
       commit("updateSearchKeyword", keywordSearch);
     },
 
-    async updateStudent({ commit }) {
-      const students = await studentClient.updateStudent();
+    async updateStudent({ commit }, student) {
+      const students = await studentClient.updateStudent(student);
 
       commit("updateStudentData", students);
     }
@@ -63,22 +63,22 @@ export default {
     },
 
     students(state) {
-      const lowerСaseKeyword = state.keywordSearch.trim().toLowerCase();
-      if (lowerСaseKeyword === "") {
+      const keywordInLowerCase = state.keywordSearch.trim().toLowerCase();
+      if (keywordInLowerCase === "") {
         return state.students;
       }
       else {
         return state.students.filter(s => {
-          return s.FullName?.toLowerCase().includes(lowerСaseKeyword)
-            || s.City?.toLowerCase().includes(lowerСaseKeyword)
-            || s.PostIndex?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Street?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Faculty?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Speciality?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Course?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Group?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Contact.Phone?.toLowerCase().includes(lowerСaseKeyword)
-            || s.Contact.Email?.toLowerCase().includes(lowerСaseKeyword);
+          return s.FullName?.toLowerCase().includes(keywordInLowerCase)
+            || s.City?.toLowerCase().includes(keywordInLowerCase)
+            || s.PostIndex?.toLowerCase().includes(keywordInLowerCase)
+            || s.Street?.toLowerCase().includes(keywordInLowerCase)
+            || s.Faculty?.toLowerCase().includes(keywordInLowerCase)
+            || s.Speciality?.toLowerCase().includes(keywordInLowerCase)
+            || s.Course?.toLowerCase().includes(keywordInLowerCase)
+            || s.Group?.toLowerCase().includes(keywordInLowerCase)
+            || s.Contact.Phone?.toLowerCase().includes(keywordInLowerCase)
+            || s.Contact.Email?.toLowerCase().includes(keywordInLowerCase);
         });
       }
     }

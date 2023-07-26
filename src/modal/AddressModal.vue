@@ -15,6 +15,7 @@
       </div>
       <div class="v-address__content">
         <div>
+          <p>Адрес</p>
           <div class="input-group">
             <label class="label-group">Город:</label>
             <!-- <input
@@ -23,7 +24,10 @@
               class="form-control"
               placeholder="Введите город"
             > -->
-            <select v-model="currentObject.city">
+            <select
+              v-model="currentObject.city"
+              @click="clickCity"
+            >
               <option
                 v-for="city in cities"
                 :key="city.id"
@@ -140,17 +144,24 @@ export default {
       updateAddress: "addressModule/updateAddress"
     }),
 
+    clickCity(event) {
+      if (this.currentObject.city) {
+        console.log(event.target.value);
+      }
+    },
+
     sendModalClose() {
       this.$emit("closeModal");
     },
 
     sendRightButton() {
-      if (this.currentObject.id) {
-        this.updateAddress(this.currentObject);
-      }
-      else {
-        this.createAddress(this.currentObject);
-      }
+      console.log(this.currentObject);
+      // if (this.currentObject.id) {
+      //   this.updateAddress(this.currentObject);
+      // }
+      // else {
+      //   this.createAddress(this.currentObject);
+      // }
       this.sendModalClose();
     }
   }
@@ -234,4 +245,13 @@ button{
 .label-group{
   margin-right: 2px;
 }
+p {
+  color: gray;
+  font-size: 19px;
+  font-style: italic;
+  margin-bottom: 5px;
+  margin-top: 10px;
+  text-decoration: underline;
+  text-align: right;
+};
 </style>

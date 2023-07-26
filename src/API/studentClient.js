@@ -36,23 +36,19 @@ class StudentClient {
 
   async updateStudent(editedStudent) {
     const response = await axios.put(`${API_URL}/student`, {
-      Address: {
-        City: editedStudent.address.city,
-        PostIndex: editedStudent.address.postindex,
-        Street: editedStudent.address.street
-      },
-      Curriculum: {
-        Course: editedStudent.curriculum.course,
-        Faculty: editedStudent.curriculum.faculty,
-        Group: editedStudent.curriculum.group,
-        Speciality: editedStudent.curriculum.speciality
-      },
+      City: editedStudent.address.city,
+      Postindex: editedStudent.address.postindex,
+      Street: editedStudent.address.street,
+      Course: editedStudent.curriculum.course,
+      Faculty: editedStudent.curriculum.faculty,
+      Group: editedStudent.curriculum.group,
+      Speciality: editedStudent.curriculum.speciality,
       Contact: {
         Email: editedStudent.contact.email,
         Phone: editedStudent.contact.phone
       },
-      Id: editedStudent.id,
-      FullName: editedStudent.fullname
+      FullName: editedStudent.fullname,
+      Id: editedStudent.id
     });
 
     return response.data;
