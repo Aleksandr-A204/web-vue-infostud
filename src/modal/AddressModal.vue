@@ -15,60 +15,76 @@
       </div>
       <div class="v-address__content">
         <div>
-          <p>Адрес</p>
           <div class="input-group">
             <label class="label-group">Город:</label>
-            <!-- <input
-              v-model="currentObject.city"
-              type="text"
-              class="form-control"
-              placeholder="Введите город"
-            > -->
-            <select
-              v-model="currentObject.city"
-              @click="clickCity"
-            >
-              <option
-                v-for="city in cities"
-                :key="city.id"
+            <div class="search-box">
+              <div class="form-control">
+                {{ currentObject.city }}
+              </div>
+              <table
+                class="popur-list hidden"
               >
-                {{ city.City }}
-              </option>
-            </select>
+                <tbody>
+                  <tr
+                    v-for="city in cities"
+                    :key="city.id"
+                  >
+                    <td
+                      class="rows-box"
+                      @click="clickCityBox(city)"
+                    >
+                      {{ city.City }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div class="input-group">
             <label class="label-group">Почтовый индекс:</label>
-            <!-- <input
-              v-model="currentObject.postindex"
-              type="text"
-              class="form-control"
-              placeholder="Введите почтовый индекс"
-            > -->
-            <select v-model="currentObject.postindex">
-              <option
-                v-for="postindex in postindexes"
-                :key="postindex.id"
+            <div class="search-box">
+              <div class="form-control">
+                {{ currentObject.postindex }}
+              </div>
+              <table
+                class="popur-list hidden"
               >
-                {{ postindex.PostIndex }}
-              </option>
-            </select>
+                <tbody>
+                  <tr
+                    v-for="postindex in postindexes"
+                    :key="postindex.id"
+                    @click="clickPostindexBox(postindex)"
+                  >
+                    <td class="rows-box">
+                      {{ postindex.PostIndex }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div class="input-group">
             <label class="label-group">Улица:</label>
-            <!-- <input
-              v-model="currentObject.street"
-              type="text"
-              class="form-control"
-              placeholder="Введите улицу"
-            > -->
-            <select v-model="currentObject.street">
-              <option
-                v-for="street in streets"
-                :key="street.id"
+            <div class="search-box">
+              <div class="form-control">
+                {{ currentObject.street }}
+              </div>
+              <table
+                class="popur-list hidden"
               >
-                {{ street.Street }}
-              </option>
-            </select>
+                <tbody>
+                  <tr
+                    v-for="street in streets"
+                    :key="street.id"
+                    @click="clickStreetBox(street)"
+                  >
+                    <td class="rows-box">
+                      {{ street.Street }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -144,10 +160,19 @@ export default {
       updateAddress: "addressModule/updateAddress"
     }),
 
-    clickCity(event) {
-      if (this.currentObject.city) {
-        console.log(event.target.value);
-      }
+    clickCityBox(city) {
+      this.currentObject.cityId = city.Id;
+      this.currentObject.city = city.City;
+    },
+
+    clickPostindexBox(postindex) {
+      this.currentObject.postindexId = postindex.Id;
+      this.currentObject.postindex = postindex.PostIndex;
+    },
+
+    clickStreetBox(street) {
+      this.currentObject.streetId = street.Id;
+      this.currentObject.street = street.Street;
     },
 
     sendModalClose() {
@@ -155,13 +180,12 @@ export default {
     },
 
     sendRightButton() {
-      console.log(this.currentObject);
-      // if (this.currentObject.id) {
-      //   this.updateAddress(this.currentObject);
-      // }
-      // else {
-      //   this.createAddress(this.currentObject);
-      // }
+      if (this.currentObject.id) {
+        this.updateAddress(this.currentObject);
+      }
+      else {
+        this.createAddress(this.currentObject);
+      }
       this.sendModalClose();
     }
   }
@@ -181,27 +205,74 @@ export default {
   bottom: 0;
 }
 .v-address{
-    padding: 16px;
-    position: fixed;
-    background: white;
-    border: 1px solid black;
-    border-radius: 7px;
-    box-shadow: 0 0 17px 0 rgb(161, 161, 161);
-    width: 600px;
-    z-index: 10;
-    &__header, &__footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        h3 {
-          text-decoration: underline;
+  padding: 16px;
+  position: fixed;
+  background: white;
+  border: 1px solid black;
+  border-radius: 7px;
+  box-shadow: 0 0 17px 0 rgb(161, 161, 161);
+  width: 600px;
+  z-index: 10;
+  &__header, &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h3 {
+      text-decoration: underline;
+    }
+  };
+  &__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .input-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+    .search-box{
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      width: 280px;
+      height: 17px;
+      border: 2px solid black;
+      border-radius: 5px;
+      .form-control{
+      width: 100%;
+      height: 100%;
+      text-align: left;
+      }
+      .popur-list{
+        position: absolute;
+        top: 100%;
+        width: 282px;
+        border-collapse: collapse;
+        cursor: default;
+        background: white;
+        border: 1px solid gray;
+        z-index: 1;
+        .rows-box{
+          min-width: 279px;
+          font-weight: normal;
+          min-height: 1.0em;
+          &:hover {
+            background: #1915f7;
+            color: white;
+          }
         }
-    };
-    &__content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    };
+      }
+      .hidden{
+        display: none;
+      }
+      &:hover .popur-list{
+        display: block;
+      }
+    }
+  };
 }
 i:hover{
   cursor: pointer;
@@ -222,24 +293,6 @@ button{
     border-style: solid;
     border-color: #000;
     color: white;
-  }
-}
-.input-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 7px;
-  .form-control {
-    width: 380px;
-    border: 1px solid black;
-    border-radius: 5px;
-  };
-  select {
-    width: 326.21px;
-    border: 1px solid black;
-    border-radius: 5px;
-    cursor: pointer;
-    color: #000;
   }
 }
 .label-group{

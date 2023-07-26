@@ -5,9 +5,9 @@ const API_URL = "http://localhost:5053/api";
 class AddressClient {
   async createAddress(addressObject) {
     const response = await axios.post(`${API_URL}/address`, {
-      City: addressObject.city,
-      PostIndex: addressObject.postindex,
-      Street: addressObject.street
+      CityId: addressObject.cityId,
+      PostindexId: addressObject.postindexId,
+      StreetId: addressObject.streetId
     });
 
     return response.data;
@@ -28,9 +28,9 @@ class AddressClient {
   async updateAddress(addressObject) {
     const response = await axios.put(`${API_URL}/address`, {
       Id: addressObject.id,
-      City: addressObject.city,
-      PostIndex: addressObject.postindex,
-      Street: addressObject.street
+      CityId: addressObject.cityId,
+      PostindexId: addressObject.postindexId,
+      StreetId: addressObject.streetId
     });
 
     return response.data;

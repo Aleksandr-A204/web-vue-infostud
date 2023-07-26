@@ -154,7 +154,7 @@ export default {
       return state.keywordSearch;
     },
 
-    wordByGroup(state) {
+    getWordByGroup(state) {
       return state.wordByGroup;
     }
   }

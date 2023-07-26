@@ -211,10 +211,7 @@ export default {
 
   data() {
     return {
-      currentObject: null,
-      showBlock: {
-        street: false
-      }
+      currentObject: null
     };
   },
 
@@ -227,7 +224,7 @@ export default {
       curriculums: "curriculumModule/curriculums",
       faculty: "curriculumModule/getFaculty",
       faculties: "curriculumModule/faculties",
-      getWordByGroup: "curriculumModule/wordByGroup",
+      getWordByGroup: "curriculumModule/getWordByGroup",
       groups: "curriculumModule/groups",
       postindexes: "addressModule/postindexes",
       specialities: "curriculumModule/specialities",
@@ -257,7 +254,15 @@ export default {
       id: this.studentObject?.Id
     };
 
-    this.$store.dispatch("curriculumModule/wordByGroup", this.currentObject.curriculum.group ?? "");
+
+    if (this.currentObject.id) {
+      this.$store.dispatch("addressModule/setCity", this.currentObject.address.city);
+      this.$store.dispatch("addressModule/setStreet", this.currentObject.address.street);
+      this.$store.dispatch("curriculumModule/setFaculty", this.currentObject.curriculum.faculty);
+      this.$store.dispatch("curriculumModule/setSpeciality", this.currentObject.curriculum.speciality);
+      this.$store.dispatch("curriculumModule/setCourse", this.currentObject.curriculum.course);
+      this.$store.dispatch("curriculumModule/wordByGroup", this.currentObject.curriculum.group ?? "");
+    }
   },
 
   async mounted() {
@@ -336,13 +341,20 @@ export default {
     },
 
     sendRightButton() {
-      if (this.currentObject.id) {
-        this.updateStudent(this.currentObject);
+      if (this.currentObject.fullname && this.currentObject.address.city && this.currentObject.address.street && this.currentObject.address.postindex
+       && this.currentObject.curriculum.faculty && this.currentObject.curriculum.speciality && this.currentObject.curriculum.course && this.currentObject.curriculum.group
+        && this.currentObject.contact.phone && this.currentObject.contact.email) {
+        if (this.currentObject.id) {
+          this.updateStudent(this.currentObject);
+        }
+        else {
+          this.addNewStudent(this.currentObject);
+        }
+        this.sendModalClose();
       }
       else {
-        this.addNewStudent(this.currentObject);
+        alert("Заполните все поля!");
       }
-      this.sendModalClose();
     },
 
     setWordByGroup(event) {

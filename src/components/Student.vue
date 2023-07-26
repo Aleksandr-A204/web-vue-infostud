@@ -23,7 +23,6 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th>
           <th>ФИО</th>
           <th>Город</th>
           <th>Почтовый индекс</th>
@@ -42,7 +41,6 @@
           v-for="student in students"
           :key="student.id"
         >
-          <td>{{ student.Id }}</td>
           <td>{{ student.FullName }}</td>
           <td>{{ student.City }}</td>
           <td>{{ student.Postindex }}</td>
