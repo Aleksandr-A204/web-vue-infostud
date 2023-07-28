@@ -1,6 +1,4 @@
-import _ from "lodash";
 import CurriculumClient from "@/API/curriculumClient.js";
-import router from "@/route/routes";
 
 const curriculumClient = new CurriculumClient();
 
@@ -10,9 +8,6 @@ export default {
 
   state: {
     curriculums: [],
-    faculty: null,
-    speciality: null,
-    course: null,
     keywordSearch: "",
     wordByGroup: ""
   },
@@ -20,18 +15,6 @@ export default {
   mutations: {
     updateCurriculumData(state, allCurriculums) {
       state.curriculums = allCurriculums;
-    },
-
-    updateFaculty(state, value) {
-      state.faculty = value;
-    },
-
-    updateCourse(state, value) {
-      state.course = value;
-    },
-
-    updateSpeciality(state, value) {
-      state.speciality = value;
     },
 
     updateKeywordSearch(state, keywordSearch) {
@@ -45,14 +28,14 @@ export default {
 
   actions: {
     async createCurriculum({ commit }, curriculumObject) {
-      const curriculums = await curriculumClient.createCurriculum(router.currentRoute.name, curriculumObject);
+      const curriculums = await curriculumClient.createCurriculum(curriculumObject);
 
       commit("updateCurriculumData", curriculums);
     },
 
     async deleteCurriculum({ commit }, curriculumId) {
       try {
-        const curriculums = await curriculumClient.deleteCurriculum(router.currentRoute.name, curriculumId);
+        const curriculums = await curriculumClient.deleteCurriculum(curriculumId);
 
         commit("updateCurriculumData", curriculums);
       }
@@ -62,8 +45,8 @@ export default {
       }
     },
 
-    async curriculumData({ commit }, routeName = router.currentRoute.name) {
-      const curriculums = await curriculumClient.getCurriculum(routeName);
+    async curriculumData({ commit }) {
+      const curriculums = await curriculumClient.getCurriculum();
 
       commit("updateCurriculumData", curriculums);
     },
@@ -72,20 +55,8 @@ export default {
       commit("updateKeywordSearch", keywordSearch);
     },
 
-    setCourse({ commit }, value) {
-      commit("updateCourse", value);
-    },
-
-    setFaculty({ commit }, value) {
-      commit("updateFaculty", value);
-    },
-
-    setSpeciality({ commit }, value) {
-      commit("updateSpeciality", value);
-    },
-
     async updateCurriculum({ commit }, curriculumObject) {
-      const curriculums = await curriculumClient.updateCurriculum(router.currentRoute.name, curriculumObject);
+      const curriculums = await curriculumClient.updateCurriculum(curriculumObject);
 
       commit("updateCurriculumData", curriculums);
     },
@@ -96,19 +67,6 @@ export default {
   },
 
   getters: {
-    faculties(state) {
-      return _.uniqBy(_.map(state.curriculums, "Faculty"), "Faculty");
-    },
-
-    courses(state) {
-      if (state.speciality) {
-        return _.uniqBy(_.map(_.filter(state.curriculums, { Faculty: { Faculty: state.faculty }, Speciality: { Speciality: state.speciality } }), "Course"), "Course");
-      }
-      else {
-        return _.sortBy(_.uniqBy(_.map(state.curriculums, "Course"), "Course"), "Course");
-      }
-    },
-
     curriculums(state) {
       const keywordInLowerCase = state.keywordSearch.toLowerCase();
       if (keywordInLowerCase === "") {
@@ -124,37 +82,11 @@ export default {
       }
     },
 
-    getFaculty(state) {
-      return state.faculty;
-    },
-
-    groups(state) {
-      if (state.wordByGroup === "") {
-        return state.course ? _.uniqBy(_.map(_.filter(state.curriculums, { Faculty: { Faculty: state.faculty },
-          Speciality: { Speciality: state.speciality }, Course: { Course: state.course } }), "Group"), "Group") : _.uniqBy(_.map(state.curriculums, "Group"), "Group");
-      }
-      else {
-        const wordInLowCase = state.wordByGroup.toLowerCase();
-        return _.uniqBy(_.map(_.filter(state.curriculums.filter(c => {
-          return c.Group.Group?.toLowerCase().includes(wordInLowCase);
-        }), { Faculty: { Faculty: state.faculty }, Speciality: { Speciality: state.speciality }, Course: { Course: state.course } }), "Group"), "Group");
-      }
-    },
-
-    specialities(state) {
-      if (state.faculty) {
-        return _.uniqBy(_.map(_.filter(state.curriculums, { Faculty: { Faculty: state.faculty } }), "Speciality"), "Speciality");
-      }
-      else {
-        return _.uniqBy(_.map(state.curriculums, "Speciality"), "Speciality");
-      }
-    },
-
     keywordSearch(state) {
       return state.keywordSearch;
     },
 
-    getWordByGroup(state) {
+    wordByGroup(state) {
       return state.wordByGroup;
     }
   }

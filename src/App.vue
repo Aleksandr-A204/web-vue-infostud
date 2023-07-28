@@ -19,7 +19,7 @@
         >
           Адрес
         </RouterLink>
-        <!-- <RouterLink
+        <RouterLink
           class="btn-nav"
           to="/curriculum"
         >
@@ -30,7 +30,7 @@
           to="/contact"
         >
           Контакт
-        </RouterLink> -->
+        </RouterLink>
       </nav>
       <RouterView />
     </div>

@@ -1,12 +1,6 @@
 <template>
-  <div
-    class="wrapper"
-    tabs
-    align="center"
-  >
-    <div
-      class="div-group"
-    >
+  <SlotComponent>
+    <div>
       <input
         :value="getKeywordSearch"
         class="input-filter"
@@ -14,13 +8,13 @@
         @input="setKeywordSearch"
       >
       <button
-        class="btn"
-        @click="addStudentClick"
+        class="button"
+        @click="addStudent"
       >
         Добавить студента
       </button>
     </div>
-    <table>
+    <table class="table">
       <thead>
         <tr>
           <th>ФИО</th>
@@ -52,11 +46,10 @@
           <td>{{ student.Contact.Phone }}</td>
           <td>{{ student.Contact.Email }}</td>
           <td>
-            <div class="btn-option">
+            <div class="button-option">
               <button
-                class="btn"
-                type="button"
-                @click="editStudentClick(student)"
+                class="button"
+                @click="editStudent(student)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -74,9 +67,8 @@
                 </svg>
               </button>
               <button
-                class="btn"
-                type="button"
-                @click="deleteStudentClick(student.Id)"
+                class="button"
+                @click="deleteStudent(student.Id)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -107,15 +99,17 @@
       :student-object="studentObject"
       @closeModal="closeEditModal"
     />
-  </div>
+  </SlotComponent>
 </template>
 
 <script>
+import SlotComponent from "./Slot.vue";
 import StudentModal from "../modal/StudentModal.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: {
+    SlotComponent,
     StudentModal
   },
 
@@ -143,7 +137,7 @@ export default {
       getStudentData: "studentModule/getStudentData"
     }),
 
-    addStudentClick() {
+    addStudent() {
       this.showAddModal = true;
     },
 
@@ -155,13 +149,13 @@ export default {
       this.showEditModal = false;
     },
 
-    deleteStudentClick(studentId) {
+    deleteStudent(studentId) {
       if (confirm("Вы действительно хотите удалить студента?")) {
         this.deleteStudent(studentId);
       }
     },
 
-    editStudentClick(selectedStudent) {
+    editStudent(selectedStudent) {
       this.studentObject = selectedStudent;
 
       this.showEditModal = true;
@@ -174,64 +168,5 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.wrapper{
-  margin: 20px;
-  .input-filter{
-    border: 1px;
-    border-radius: 10px;
-    border-style: solid;
-    border-color: black;
-    height: 25px;
-    margin-right: 15px;
-    max-width: 300px;
-    width: 100%;
-  }
-  .btn {
-    background-color: #87CEEB;
-    border: 1px;
-    border-style: solid;
-    border-radius: 7px;
-    box-sizing: border-box;
-    color: black;
-    text-align: center;
-    height: 25px;
-    margin: 1px;
-  }
-  .btn:hover {
-    background: #1915f7;
-    border: 1px;
-    border-style: solid;
-    border-color: #000;
-    color: white;
-  }
-  .btn-option{
-    align-self: center;
-  }
-  table {
-    background: white;
-    border-collapse: collapse;
-    border-color: gray;
-    font-family: sans-serif;
-    font-size: 14px;
-    margin-top: 7px;
-  }
-  th {
-    border-color: gray;
-    border-style: solid;
-    border-width: 1px;
-    text-align: center;
-    font-size: 16px;
-    padding: 5px;
-  }
-  td {
-    background: white;
-    border-color: lightgray;
-    border-style: solid;
-    border-width: 1px;
-    font-size: 15px;
-    padding: 5px;
-    text-align: left;
-  }
-}
+<style scoped>
 </style>

@@ -15,8 +15,8 @@
         @input="setKeywordSearch"
       >
       <button
-        class="btn show-change_stud"
-        @click="addCurriculumClick"
+        class="btn"
+        @click="addCurriculum"
       >
         Добавить курс обучения
       </button>
@@ -47,7 +47,7 @@
               <button
                 class="btn"
                 type="button"
-                @click="editCurriculumClick(curriculum)"
+                @click="editCurriculum(curriculum)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +67,7 @@
               <button
                 class="btn"
                 type="button"
-                @click="deleteCurriculumClick(curriculum.Id)"
+                @click="deleteCurriculum(curriculum.Id)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -132,7 +132,13 @@ export default {
       getCurriculumData: "curriculumModule/curriculumData"
     }),
 
-    addCurriculumClick() {
+    editCurriculum(selectedCurriculum) {
+      this.selectedCurriculum = selectedCurriculum;
+
+      this.showEditModal = true;
+    },
+
+    addCurriculum() {
       this.showAddModal = true;
     },
 
@@ -144,16 +150,10 @@ export default {
       this.showEditModal = false;
     },
 
-    async deleteCurriculumClick(curriculumId) {
+    async deleteCurriculum(curriculumId) {
       if (confirm("Вы действительно хотите удалить этот курс обучения?")) {
         this.deleteCurriculum(curriculumId);
       }
-    },
-
-    editCurriculumClick(selectedCurriculum) {
-      this.selectedCurriculum = selectedCurriculum;
-
-      this.showEditModal = true;
     },
 
     setKeywordSearch(event) {

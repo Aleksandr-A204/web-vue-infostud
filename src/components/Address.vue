@@ -15,7 +15,7 @@
       >
       <button
         class="btn"
-        @click="addStudentClick"
+        @click="addAddress"
       >
         Добавить адрес
       </button>
@@ -44,7 +44,7 @@
               <button
                 class="btn"
                 type="button"
-                @click="deleteAddressClick(address.Id)"
+                @click="deleteAddress(address.Id)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -109,17 +109,17 @@ export default {
       getAddressData: "addressModule/getAddressData"
     }),
 
-    addStudentClick() {
+    addAddress() {
       this.showAddModal = true;
     },
 
-    deleteAddressClick(addressId) {
+    deleteAddress(addressId) {
       if (confirm("Вы действительно хотите удалить адрес?")) {
         this.deleteAddress(addressId);
       }
     },
 
-    editAddressClick(selectedAddress) {
+    editAddress(selectedAddress) {
       this.selectedAddress = selectedAddress;
 
       this.showEditModal = true;

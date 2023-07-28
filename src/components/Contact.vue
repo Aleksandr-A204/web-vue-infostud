@@ -16,7 +16,7 @@
       >
       <button
         class="btn show-change_stud"
-        @click="addContactClick"
+        @click="addContact"
       >
         Добавить контакт
       </button>
@@ -44,7 +44,7 @@
               <button
                 class="btn"
                 type="button"
-                @click="editContactClick(contact)"
+                @click="editContact(contact)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +64,7 @@
               <button
                 class="btn"
                 type="button"
-                @click="deleteContactClick(contact.Id)"
+                @click="deleteContact(contact.Id)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +129,7 @@ export default {
       getAllContacts: "contactModule/allContacts"
     }),
 
-    addContactClick() {
+    addContact() {
       this.showAddModal = true;
     },
 
@@ -141,13 +141,13 @@ export default {
       this.showEditModal = false;
     },
 
-    deleteContactClick(contactId) {
+    deleteContact(contactId) {
       if (confirm("Вы действительно хотите удалить этот контакт?")) {
         this.deleteContact(contactId);
       }
     },
 
-    editContactClick(selectedContact) {
+    editContact(selectedContact) {
       this.selectedContact = selectedContact;
 
       this.showEditModal = true;
