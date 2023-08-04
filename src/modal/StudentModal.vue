@@ -1,8 +1,14 @@
 <template>
-  <SlotModal>
+  <SlotModal
+    :current-object="studentObject"
+    @close="$emit('close')"
+    @saveData="saveSudentData"
+  >
     <div class="inside-modal__content">
       <div>
-        <p>Студент</p>
+        <p class="p">
+          Студент
+        </p>
         <div class="block-group">
           <label class="form-label">ФИО:</label>
           <input
@@ -11,17 +17,19 @@
             class="form-control"
           >
         </div>
-        <p>Адрес</p>
+        <p class="p">
+          Адрес
+        </p>
         <div class="block-group">
           <label class="form-label">Город:</label>
           <select
             v-model="currentObject.address.city"
             class="form-select"
-            @click="citySelect"
+            @click="hidenStreetAndIndex"
           >
             <option
-              v-for="c in cities"
-              :key="c.id"
+              v-for="c of cities"
+              :key="c.City"
             >
               {{ c.City }}
             </option>
@@ -35,11 +43,11 @@
           <select
             v-model="currentObject.address.street"
             class="form-select"
-            @click="streetSelect"
+            @click="hidenIndex"
           >
             <option
               v-for="s in streets"
-              :key="s.id"
+              :key="s.Id"
             >
               {{ s.Street }}
             </option>
@@ -56,23 +64,25 @@
           >
             <option
               v-for="postindex in postindexes"
-              :key="postindex.id"
+              :key="postindex.Id"
             >
               {{ postindex.PostIndex }}
             </option>
           </select>
         </div>
-        <p>Учебный план</p>
+        <p class="p">
+          Учебный план
+        </p>
         <div class="block-group">
           <label class="form-label">Факультет:</label>
           <select
             v-model="currentObject.curriculum.faculty"
             class="form-select"
-            @click="facultySelect"
+            @click="hidenSpecialityCourseGroup"
           >
             <option
               v-for="f in faculties"
-              :key="f.id"
+              :key="f.Id"
             >
               {{ f.Faculty }}
             </option>
@@ -86,11 +96,11 @@
           <select
             v-model="currentObject.curriculum.speciality"
             class="form-select"
-            @click="specialitySelect"
+            @click="hidenCourseGroup"
           >
             <option
               v-for="s in specialities"
-              :key="s.id"
+              :key="s.Id"
             >
               {{ s.Speciality }}
             </option>
@@ -104,11 +114,11 @@
           <select
             v-model="currentObject.curriculum.course"
             class="form-select"
-            @click="courseSelect"
+            @click="hidenGroup"
           >
             <option
               v-for="c in courses"
-              :key="c.id"
+              :key="c.Id"
             >
               {{ c.Course }}
             </option>
@@ -119,31 +129,21 @@
           class="block-group"
         >
           <label class="form-label">Группа:</label>
-          <div class="search-box">
-            <input
-              v-model="wordByGroup"
-              class="form-control"
-              type="text"
-              @input="wordByGroupInput"
+          <select
+            v-model="currentObject.curriculum.group"
+            class="form-select"
+          >
+            <option
+              v-for="g in groups"
+              :key="g.Id"
             >
-            <table
-              class="drop-down-list hidden"
-            >
-              <tbody>
-                <tr
-                  v-for="g in groups"
-                  :key="g.id"
-                  @click="eventPopurList"
-                >
-                  <td class="rows-box">
-                    {{ g.Group }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              {{ g.Group }}
+            </option>
+          </select>
         </div>
-        <p>Контакт</p>
+        <p class="p">
+          Контакт
+        </p>
         <div class="block-group">
           <label class="form-label">Номер телефона:</label>
           <input
@@ -162,21 +162,6 @@
         </div>
       </div>
     </div>
-
-    <div class="inside-modal__footer">
-      <button
-        class="button"
-        @click="closeModal"
-      >
-        Отмена
-      </button>
-      <button
-        class="button"
-        @click="saveSudentData"
-      >
-        Сохранить
-      </button>
-    </div>
   </SlotModal>
 </template>
 
@@ -191,11 +176,6 @@ export default {
   },
 
   props: {
-    titleModal: {
-      type: String,
-      default: "Студент"
-    },
-
     studentObject: {
       type: Object,
       default: () => {}
@@ -204,13 +184,7 @@ export default {
 
   data() {
     return {
-      currentObject: null,
-      city: null,
-      street: null,
-      faculty: null,
-      speciality: null,
-      course: null,
-      wordByGroup: ""
+      currentObject: null
     };
   },
 
@@ -226,8 +200,8 @@ export default {
     },
 
     courses() {
-      return this.speciality ? _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.faculty }, Speciality: { Speciality: this.speciality } }), "Course"), "Course") :
-        _.sortBy(_.uniqBy(_.map(this.curriculums, "Course"), "Course"), "Course");
+      return this.currentObject.curriculum.speciality ? _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.currentObject.curriculum.faculty },
+        Speciality: { Speciality: this.currentObject.curriculum.speciality } }), "Course"), "Course") : _.sortBy(_.uniqBy(_.map(this.curriculums, "Course"), "Course"), "Course");
     },
 
     faculties() {
@@ -235,33 +209,24 @@ export default {
     },
 
     groups() {
-      if (this.wordByGroup === "") {
-        return this.course ? _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.faculty },
-          Speciality: { Speciality: this.speciality }, Course: { Course: this.course } }), "Group"), "Group") : _.uniqBy(_.map(this.curriculums, "Group"), "Group");
-      }
-      else {
-        return _.uniqBy(_.map(_.filter(this.curriculums.filter(c => {
-          return c.Group.Group?.toLowerCase().includes(this.wordByGroup.toLowerCase());
-        }), { Faculty: { Faculty: this.faculty }, Speciality: { Speciality: this.speciality }, Course: { Course: this.course } }), "Group"), "Group");
-      }
+      return this.currentObject.curriculum.course ? _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.currentObject.curriculum.faculty },
+        Speciality: { Speciality: this.currentObject.curriculum.speciality }, Course: { Course: this.currentObject.curriculum.course } }), "Group"), "Group") :
+        _.uniqBy(_.map(this.curriculums, "Group"), "Group");
     },
 
     postindexes() {
-      return this.street ? _.uniqBy(_.map(_.filter(this.addresses, { City: { City: this.city }, Street: { Street: this.street } }), "Postindex"), "PostIndex") :
-        _.uniqBy(_.map(this.addresses, "Postindex"), "PostIndex");
+      return this.currentObject.address.street ? _.uniqBy(_.map(_.filter(this.addresses, { City: { City: this.currentObject.address.city },
+        Street: { Street: this.currentObject.address.street } }), "Postindex"), "PostIndex") : _.uniqBy(_.map(this.addresses, "Postindex"), "PostIndex");
     },
 
     specialities() {
-      if (this.faculty) {
-        return _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.faculty } }), "Speciality"), "Speciality");
-      }
-      else {
-        return _.uniqBy(_.map(this.curriculums, "Speciality"), "Speciality");
-      }
+      return this.currentObject.curriculum.faculty ? _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.currentObject.curriculum.faculty } }), "Speciality"), "Speciality") :
+        _.uniqBy(_.map(this.curriculums, "Speciality"), "Speciality");
     },
 
     streets() {
-      return this.city ? _.uniqBy(_.map(_.filter(this.addresses, { City: { City: this.city } }), "Street"), "Street") : _.uniqBy(_.map(this.addresses, "Street"), "Street");
+      return this.currentObject.address.city ? _.uniqBy(_.map(_.filter(this.addresses, { City: { City: this.currentObject.address.city } }), "Street"), "Street") :
+        _.uniqBy(_.map(this.addresses, "Street"), "Street");
     }
   },
 
@@ -285,10 +250,6 @@ export default {
       fullname: this.studentObject?.FullName,
       id: this.studentObject?.Id
     };
-
-    if (this.currentObject.id) {
-      this.wordByGroup = this.currentObject.curriculum.group;
-    }
   },
 
   async mounted() {
@@ -304,68 +265,38 @@ export default {
       updateStudent: "studentModule/updateStudent"
     }),
 
-    eventPopurList(event) {
-      this.wordByGroup = event.target.innerText;
-
-      event.srcElement.offsetParent.classList.toggle("hidden", true);
-    },
-
-    citySelect(event) {
+    hidenStreetAndIndex(event) {
       if (!event.pointerId) {
-        if (event.target.value !== this.city) {
-          this.currentObject.address.street = null;
-          this.currentObject.address.postindex = null;
-        }
-
-        this.city = event.target.value;
+        this.currentObject.address.street = null;
+        this.currentObject.address.postindex = null;
       }
     },
 
-    streetSelect(event) {
+    hidenIndex(event) {
       if (!event.pointerId) {
-        if (event.target.value !== this.street) {
-          this.currentObject.address.postindex = null;
-        }
-
-        this.street = event.target.value;
+        this.currentObject.address.postindex = null;
       }
     },
 
-    facultySelect(event) {
+    hidenSpecialityCourseGroup(event) {
       if (!event.pointerId) {
-        if (event.target.value !== this.faculty) {
-          this.currentObject.curriculum.speciality = null;
-          this.currentObject.curriculum.course = null;
-          this.wordByGroup = "";
-        }
-
-        this.faculty = event.target.value;
+        this.currentObject.curriculum.speciality = null;
+        this.currentObject.curriculum.course = null;
+        this.currentObject.curriculum.group = null;
       }
     },
 
-    specialitySelect(event) {
+    hidenCourseGroup(event) {
       if (!event.pointerId) {
-        if (event.target.value !== this.speciality) {
-          this.currentObject.curriculum.course = null;
-          this.wordByGroup = "";
-        }
-
-        this.speciality = event.target.value;
+        this.currentObject.curriculum.course = null;
+        this.currentObject.curriculum.group = null;
       }
     },
 
-    courseSelect(event) {
+    hidenGroup(event) {
       if (!event.pointerId) {
-        if (event.target.value !== this.course) {
-          this.wordByGroup = "";
-        }
-
-        this.course = event.target.value;
+        this.currentObject.curriculum.group = null;
       }
-    },
-
-    closeModal() {
-      this.$emit("closeModal");
     },
 
     saveSudentData() {
@@ -378,16 +309,11 @@ export default {
         else {
           this.addNewStudent(this.currentObject);
         }
-        this.closeModal();
+        this.$emit("close");
       }
       else {
         alert("Заполните все поля!");
       }
-    },
-
-    wordByGroupInput(event) {
-      const tableElement = event.target.nextElementSibling.classList;
-      event.target.value === "" ? tableElement.toggle("hidden", true) : tableElement.toggle("hidden", false);
     }
   }
 };

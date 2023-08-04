@@ -29,15 +29,9 @@ export default {
     },
 
     async deleteStudent({ commit }, studentId) {
-      try {
-        const students = await studentClient.deleteStudent(studentId);
+      const students = await studentClient.deleteStudent(studentId);
 
-        commit("updateStudentData", students);
-      }
-      catch (err) {
-        console.log(err);
-        alert("Невозможно удалить.");
-      }
+      commit("updateStudentData", students);
     },
 
     async getStudentData({ commit }) {
@@ -59,28 +53,12 @@ export default {
 
   getters: {
     keywordSearch(state) {
+      studentClient.setKeywordSearch(state.keywordSearch);
       return state.keywordSearch;
     },
 
     students(state) {
-      const keywordInLowerCase = state.keywordSearch.trim().toLowerCase();
-      if (keywordInLowerCase === "") {
-        return state.students;
-      }
-      else {
-        return state.students.filter(s => {
-          return s.FullName?.toLowerCase().includes(keywordInLowerCase)
-            || s.City?.toLowerCase().includes(keywordInLowerCase)
-            || s.PostIndex?.toLowerCase().includes(keywordInLowerCase)
-            || s.Street?.toLowerCase().includes(keywordInLowerCase)
-            || s.Faculty?.toLowerCase().includes(keywordInLowerCase)
-            || s.Speciality?.toLowerCase().includes(keywordInLowerCase)
-            || s.Course?.toLowerCase().includes(keywordInLowerCase)
-            || s.Group?.toLowerCase().includes(keywordInLowerCase)
-            || s.Contact.Phone?.toLowerCase().includes(keywordInLowerCase)
-            || s.Contact.Email?.toLowerCase().includes(keywordInLowerCase);
-        });
-      }
+      return state.students;
     }
   }
 };

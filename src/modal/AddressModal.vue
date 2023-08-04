@@ -1,93 +1,57 @@
 <template>
-  <SlotModal>
+  <SlotModal
+    :current-object="addressObject"
+    @close="$emit('close')"
+    @saveData="saveAddressData"
+  >
     <div class="inside-modal__content">
       <div>
         <div class="block-group">
           <label class="label-group">Город:</label>
-          <div class="search-box">
-            <div class="form-control">
-              {{ currentObject.city }}
-            </div>
-            <table
-              class="drop-down-list hidden"
+          <select
+            v-model="currentObject.cityId"
+            class="form-select"
+          >
+            <option
+              v-for="c in cities"
+              :key="c.Id"
+              :value="c.Id"
             >
-              <tbody>
-                <tr
-                  v-for="city in cities"
-                  :key="city.id"
-                >
-                  <td
-                    class="rows-box"
-                    @click="clickCityBox(city)"
-                  >
-                    {{ city.City }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              {{ c.City }}
+            </option>
+          </select>
         </div>
         <div class="block-group">
           <label class="label-group">Почтовый индекс:</label>
-          <div class="search-box">
-            <div class="form-control">
-              {{ currentObject.postindex }}
-            </div>
-            <table
-              class="drop-down-list hidden"
+          <select
+            v-model="currentObject.postindexId"
+            class="form-select"
+          >
+            <option
+              v-for="p in postindexes"
+              :key="p.Id"
+              :value="p.Id"
             >
-              <tbody>
-                <tr
-                  v-for="postindex in postindexes"
-                  :key="postindex.id"
-                  @click="clickPostindexBox(postindex)"
-                >
-                  <td class="rows-box">
-                    {{ postindex.PostIndex }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              {{ p.PostIndex }}
+            </option>
+          </select>
         </div>
         <div class="block-group">
           <label class="label-group">Улица:</label>
-          <div class="search-box">
-            <div class="form-control">
-              {{ currentObject.street }}
-            </div>
-            <table
-              class="drop-down-list hidden"
+          <select
+            v-model="currentObject.streetId"
+            class="form-select"
+          >
+            <option
+              v-for="s in streets"
+              :key="s.Id"
+              :value="s.Id"
             >
-              <tbody>
-                <tr
-                  v-for="street in streets"
-                  :key="street.id"
-                  @click="clickStreetBox(street)"
-                >
-                  <td class="rows-box">
-                    {{ street.Street }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              {{ s.Street }}
+            </option>
+          </select>
         </div>
       </div>
-    </div>
-    <div class="inside-modal__footer">
-      <button
-        class="button"
-        @click="closeModal"
-      >
-        Отмена
-      </button>
-      <button
-        class="button"
-        @click="saveAddressData"
-      >
-        Сохранить
-      </button>
     </div>
   </SlotModal>
 </template>
@@ -102,11 +66,6 @@ export default {
   },
 
   props: {
-    titleModal: {
-      type: String,
-      default: "Адрес"
-    },
-
     addressObject: {
       type: Object,
       default: () => {}
@@ -129,10 +88,10 @@ export default {
 
   created() {
     this.currentObject = {
-      city: this.addressObject?.City,
       id: this.addressObject?.Id,
-      postindex: this.addressObject?.PostIndex,
-      street: this.addressObject?.Street
+      cityId: this.addressObject?.CityId,
+      streetId: this.addressObject?.StreetId,
+      postindexId: this.addressObject?.PostindexId
     };
   },
 
@@ -151,33 +110,20 @@ export default {
       updateAddress: "addressModule/updateAddress"
     }),
 
-    clickCityBox(city) {
-      this.currentObject.cityId = city.Id;
-      this.currentObject.city = city.City;
-    },
-
-    clickPostindexBox(postindex) {
-      this.currentObject.postindexId = postindex.Id;
-      this.currentObject.postindex = postindex.PostIndex;
-    },
-
-    clickStreetBox(street) {
-      this.currentObject.streetId = street.Id;
-      this.currentObject.street = street.Street;
-    },
-
-    closeModal() {
-      this.$emit("closeModal");
-    },
-
     saveAddressData() {
-      if (this.currentObject.id) {
-        this.updateAddress(this.currentObject);
+      if (this.currentObject.cityId && this.currentObject.streetId && this.currentObject.postindexId) {
+        if (this.currentObject.id) {
+          this.updateAddress(this.currentObject);
+        }
+        else {
+          this.createAddress(this.currentObject);
+        }
+
+        this.$emit("close");
       }
       else {
-        this.createAddress(this.currentObject);
+        alert("Заполните все поля!");
       }
-      this.closeModal();
     }
   }
 };

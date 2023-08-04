@@ -1,30 +1,66 @@
 <template>
   <div class="outside-modal">
     <div
-      v-click-outside="closeModal"
+      v-click-outside="close"
       class="inside-modal"
     >
       <div class="inside-modal__header">
-        <span class="title">Создание</span>
+        <span class="title">{{ title }}</span>
         <span>
           <i
             class="material-icons"
-            @click="closeModal"
+            @click="$emit('close')"
           >close</i>
         </span>
       </div>
 
       <slot />
+
+      <div class="inside-modal__footer">
+        <button
+          class="button"
+          @click="$emit('close')"
+        >
+          Отмена
+        </button>
+        <button
+          class="button"
+          @click="$emit('saveData')"
+        >
+          Сохранить
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    currentObject: {
+      type: Object,
+      default: () => {}
+    }
+  },
+
+  data() {
+    return {
+      title: null
+    };
+  },
+
+  created() {
+    if (this.currentObject?.Id) {
+      this.title = "Редактирование";
+    }
+    else {
+      this.title = "Создание";
+    }
+  },
+
   methods: {
-    closeModal() {
-      console.log("!");
-      //this.$emit("closeModal");
+    close() {
+      this.$emit("close");
     }
   }
 };
@@ -67,24 +103,7 @@ export default {
         cursor: pointer;
       }
 
-      .button{
-        background-color: #87CEEB;
-        border: 1px;
-        border-style: solid;
-        border-radius: 7px;
-        box-sizing: border-box;
-        color: black;
-        text-align: center;
-        height: 25px;
-        margin: 1px;
-          &:hover {
-          background: #1915f7;
-          border: 1px;
-          border-style: solid;
-          border-color: #000;
-          color: white;
-        }
-      }
+      @import "../assets/button.css";
     };
 
     &__content {
@@ -92,7 +111,7 @@ export default {
       justify-content: center;
       align-items: center;
 
-      p {
+      .p {
         color: gray;
         font-size: 19px;
         font-style: italic;
@@ -137,26 +156,6 @@ export default {
           flex-direction: column;
           justify-content: center;
           position: relative;
-
-          .drop-down-list{
-            position: absolute;
-            top: 100%;
-            width: 100%;
-            border-collapse: collapse;
-            cursor: default;
-            background: white;
-            border: 1px solid gray;
-
-            .rows-box{
-              min-width: 320px;
-              font-weight: normal;
-              min-height: 1.2em;
-              &:hover {
-                background: #1915f7;
-                color: white;
-              }
-            }
-          }
 
           .hidden{
             display: none;

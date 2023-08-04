@@ -1,65 +1,79 @@
 <template>
-  <SlotModal>
+  <SlotModal
+    :current-object="curriculumObject"
+    @close="$emit('close')"
+    @saveData="saveCurriculumData"
+  >
     <div class="inside-modal__content">
       <div>
         <div class="block-group">
           <label class="label-group">Факультет:</label>
-          <input
-            v-model="currentObject.faculty"
-            type="text"
-            class="form-control"
-            placeholder="Введите факультет"
+          <select
+            v-model="currentObject.facultyId"
+            class="form-select"
           >
+            <option
+              v-for="f in faculties"
+              :key="f.Id"
+              :value="f.Id"
+            >
+              {{ f.Faculty }}
+            </option>
+          </select>
         </div>
         <div class="block-group">
           <label class="label-group">Специальность:</label>
-          <input
-            v-model="currentObject.speciality"
-            type="text"
-            class="form-control"
-            placeholder="Введите специальность"
+          <select
+            v-model="currentObject.specialityId"
+            class="form-select"
           >
+            <option
+              v-for="s in specialities"
+              :key="s.Id"
+              :value="s.Id"
+            >
+              {{ s.Speciality }}
+            </option>
+          </select>
         </div>
         <div class="block-group">
           <label class="label-group">Курс:</label>
-          <input
-            v-model="currentObject.course"
-            type="text"
-            class="form-control"
-            placeholder="Введите курс"
+          <select
+            v-model="currentObject.courseId"
+            class="form-select"
           >
+            <option
+              v-for="c in courses"
+              :key="c.Id"
+              :value="c.Id"
+            >
+              {{ c.Course }}
+            </option>
+          </select>
         </div>
         <div class="block-group">
           <label class="label-group">Группа:</label>
-          <input
-            v-model="currentObject.group"
-            type="text"
-            class="form-control"
-            placeholder="Введите группу"
+          <select
+            v-model="currentObject.groupId"
+            class="form-select"
           >
+            <option
+              v-for="g in groups"
+              :key="g.Id"
+              :value="g.Id"
+            >
+              {{ g.Group }}
+            </option>
+          </select>
         </div>
       </div>
-    </div>
-    <div class="inside-modal__footer">
-      <button
-        class="button"
-        @click="closeModal"
-      >
-        Отмена
-      </button>
-      <button
-        class="button"
-        @click="saveCurriculumData"
-      >
-        Сохранить
-      </button>
     </div>
   </SlotModal>
 </template>
 
 <script>
 import SlotModal from "./Modal.vue";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: {
@@ -67,12 +81,7 @@ export default {
   },
 
   props: {
-    titleModal: {
-      type: String,
-      default: "Курс обучения"
-    },
-
-    selectedItem: {
+    curriculumObject: {
       type: Object,
       default: () => {}
     }
@@ -84,25 +93,41 @@ export default {
     };
   },
 
+  computed: {
+    ...mapGetters({
+      faculties: "facultyModule/faculties",
+      specialities: "specialityModule/specialities",
+      courses: "courseModule/courses",
+      groups: "groupModule/groups"
+    })
+  },
+
   created() {
     this.currentObject = {
-      faculty: this.selectedItem?.Faculty,
-      id: this.selectedItem?.Id,
-      speciality: this.selectedItem?.Speciality,
-      course: this.selectedItem?.Course,
-      group: this.selectedItem?.Group
+      facultyId: this.curriculumObject?.FacultyId,
+      id: this.curriculumObject?.Id,
+      specialityId: this.curriculumObject?.SpecialityId,
+      courseId: this.curriculumObject?.CourseId,
+      groupId: this.curriculumObject?.GroupId
     };
+  },
+
+  async mounted() {
+    await this.getFacultyData();
+    await this.getSpecialityData();
+    await this.getCourseData();
+    await this.getGroupData();
   },
 
   methods: {
     ...mapActions({
+      getFacultyData: "facultyModule/getFacultyData",
+      getSpecialityData: "specialityModule/getSpecialityData",
+      getCourseData: "courseModule/getCourseData",
+      getGroupData: "groupModule/getGroupData",
       createCurriculum: "curriculumModule/createCurriculum",
       updateCurriculum: "curriculumModule/updateCurriculum"
     }),
-
-    closeModal() {
-      this.$emit("closeModal");
-    },
 
     saveCurriculumData() {
       if (this.currentObject.id) {
@@ -111,7 +136,8 @@ export default {
       else {
         this.createCurriculum(this.currentObject);
       }
-      this.closeModal();
+
+      this.$emit("close");
     }
   }
 };

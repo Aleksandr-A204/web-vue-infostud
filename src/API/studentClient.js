@@ -3,10 +3,8 @@ import axios from "axios";
 const API_URL = "http://localhost:5053/api";
 
 class StudentClient {
-  async getStudents() {
-    const response = await axios.get(`${API_URL}/student`);
-
-    return response.data;
+  setKeywordSearch(keywordSearch) {
+    this.keywordSearch = keywordSearch;
   }
 
   async addNewStudent(newStudent) {
@@ -25,13 +23,23 @@ class StudentClient {
       FullName: newStudent.fullname
     });
 
-    return responce.data;
+    alert(responce.data);
+
+    return this.getStudents();
+  }
+
+  async getStudents() {
+    const response = await axios.get(`${API_URL}/student/1`);
+
+    return response.data;
   }
 
   async deleteStudent(studentId) {
     const responce = await axios.delete(`${API_URL}/student/${studentId}`);
 
-    return responce.data;
+    alert(responce.data);
+
+    return this.getStudents();
   }
 
   async updateStudent(editedStudent) {
@@ -51,7 +59,9 @@ class StudentClient {
       Id: editedStudent.id
     });
 
-    return response.data;
+    alert(response.data);
+
+    return this.getStudents();
   }
 }
 

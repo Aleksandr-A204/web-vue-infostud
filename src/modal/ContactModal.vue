@@ -1,5 +1,9 @@
 <template>
-  <SlotModal>
+  <SlotModal
+    :current-object="selectedItem"
+    @close="$emit('close')"
+    @saveData="saveContactData"
+  >
     <div class="inside-modal__content">
       <div>
         <div class="block-group">
@@ -22,20 +26,6 @@
         </div>
       </div>
     </div>
-    <div class="inside-modal__footer">
-      <button
-        class="button"
-        @click="closeModal"
-      >
-        Отмена
-      </button>
-      <button
-        class="button"
-        @click="saveContactData"
-      >
-        Сохранить
-      </button>
-    </div>
   </SlotModal>
 </template>
 
@@ -49,11 +39,6 @@ export default {
   },
 
   props: {
-    titleModal: {
-      type: String,
-      default: "Контакт"
-    },
-
     selectedItem: {
       type: Object,
       default: () => {}
@@ -80,10 +65,6 @@ export default {
       updateContact: "contactModule/updateContact"
     }),
 
-    closeModal() {
-      this.$emit("closeModal");
-    },
-
     saveContactData() {
       if (this.currentObject.id) {
         this.updateContact(this.currentObject);
@@ -91,7 +72,7 @@ export default {
       else {
         this.createContact(this.currentObject);
       }
-      this.closeModal();
+      this.$emit("close");
     }
   }
 };

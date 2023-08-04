@@ -10,7 +10,9 @@ class AddressClient {
       StreetId: addressObject.streetId
     });
 
-    return response.data;
+    alert(response.data);
+
+    return this.getAddresses();
   }
 
   async getAddresses() {
@@ -22,7 +24,9 @@ class AddressClient {
   async deleteAddress(addressId) {
     const response = await axios.delete(`${API_URL}/address/${addressId}`);
 
-    return response.data;
+    alert(response.data);
+
+    return this.getAddresses();
   }
 
   async updateAddress(addressObject) {
@@ -33,7 +37,9 @@ class AddressClient {
       StreetId: addressObject.streetId
     });
 
-    return response.data;
+    alert(response.data);
+
+    return this.getAddresses();
   }
 }
 

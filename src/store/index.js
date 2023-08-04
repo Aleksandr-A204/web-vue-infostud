@@ -1,8 +1,12 @@
 import addressModule from "./modules/address.js";
 import cityModule from "./modules/city.js";
 import contactModule from "./modules/contact.js";
+import courseModule from "./modules/course.js";
 import curriculumModule from "./modules/curriculum.js";
+import facultyModule from "./modules/faculty.js";
+import groupModule from "./modules/group.js";
 import postindexModule from "./modules/postindex.js";
+import specialityModule from "./modules/speciality.js";
 import streetModule from "./modules/street.js";
 import studentModule from "./modules/student.js";
 import Vue from "vue";
@@ -18,6 +22,10 @@ export default new Vuex.Store({
     streetModule,
     contactModule,
     curriculumModule,
-    studentModule
+    studentModule,
+    facultyModule,
+    specialityModule,
+    courseModule,
+    groupModule
   }
 });

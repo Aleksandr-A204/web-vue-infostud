@@ -8,8 +8,7 @@ export default {
 
   state: {
     curriculums: [],
-    keywordSearch: "",
-    wordByGroup: ""
+    keywordSearch: ""
   },
 
   mutations: {
@@ -19,10 +18,6 @@ export default {
 
     updateKeywordSearch(state, keywordSearch) {
       state.keywordSearch = keywordSearch;
-    },
-
-    updateWordByGroup(state, value) {
-      state.wordByGroup = value;
     }
   },
 
@@ -34,15 +29,9 @@ export default {
     },
 
     async deleteCurriculum({ commit }, curriculumId) {
-      try {
-        const curriculums = await curriculumClient.deleteCurriculum(curriculumId);
+      const curriculums = await curriculumClient.deleteCurriculum(curriculumId);
 
-        commit("updateCurriculumData", curriculums);
-      }
-      catch (err) {
-        console.log(err);
-        alert("Невозможно удалить.");
-      }
+      commit("updateCurriculumData", curriculums);
     },
 
     async curriculumData({ commit }) {
@@ -59,10 +48,6 @@ export default {
       const curriculums = await curriculumClient.updateCurriculum(curriculumObject);
 
       commit("updateCurriculumData", curriculums);
-    },
-
-    wordByGroup({ commit }, value) {
-      commit("updateWordByGroup", value);
     }
   },
 
@@ -84,10 +69,6 @@ export default {
 
     keywordSearch(state) {
       return state.keywordSearch;
-    },
-
-    wordByGroup(state) {
-      return state.wordByGroup;
     }
   }
 };
