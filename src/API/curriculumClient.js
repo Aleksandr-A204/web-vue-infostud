@@ -12,22 +12,26 @@ class CurriculumClient {
     });
 
     alert(responce.data);
-
-    return this.getCurriculum();
   }
 
   async deleteCurriculum(curriculumId) {
     const responce = await axios.delete(`${API_URL}/curriculum/${curriculumId}`);
 
     alert(responce.data);
-
-    return this.getCurriculum();
   }
 
-  async getCurriculum() {
-    const responce = await axios.get(`${API_URL}/curriculum`);
+  async getCurriculums() {
+    const responce = await axios.get(`${API_URL}/curriculum`, {
+      params: {
+        keywordSearch: this.keywordSearch
+      }
+    });
 
     return responce.data;
+  }
+
+  setKeywordSearch(keywordSearch) {
+    this.keywordSearch = keywordSearch;
   }
 
   async updateCurriculum(curriculumObject) {
@@ -40,8 +44,6 @@ class CurriculumClient {
     });
 
     alert(responce.data);
-
-    return this.getCurriculum();
   }
 }
 

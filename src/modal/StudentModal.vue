@@ -244,8 +244,8 @@ export default {
         group: this.studentObject?.Group
       },
       contact: {
-        phone: this.studentObject?.Contact.Phone,
-        email: this.studentObject?.Contact.Email
+        phone: this.studentObject?.Phone,
+        email: this.studentObject?.Email
       },
       fullname: this.studentObject?.FullName,
       id: this.studentObject?.Id

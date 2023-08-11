@@ -23,29 +23,37 @@ export default {
 
   actions: {
     async createCurriculum({ commit }, curriculumObject) {
-      const curriculums = await curriculumClient.createCurriculum(curriculumObject);
+      await curriculumClient.createCurriculum(curriculumObject);
+      const curriculums = await curriculumClient.getCurriculums();
 
       commit("updateCurriculumData", curriculums);
     },
 
     async deleteCurriculum({ commit }, curriculumId) {
-      const curriculums = await curriculumClient.deleteCurriculum(curriculumId);
+      await curriculumClient.deleteCurriculum(curriculumId);
+      const curriculums = await curriculumClient.getCurriculums();
 
       commit("updateCurriculumData", curriculums);
     },
 
     async curriculumData({ commit }) {
-      const curriculums = await curriculumClient.getCurriculum();
+      const curriculums = await curriculumClient.getCurriculums();
 
       commit("updateCurriculumData", curriculums);
     },
 
-    keywordSearch({ commit }, keywordSearch) {
+    async keywordSearch({ commit }, keywordSearch) {
+      curriculumClient.setKeywordSearch(keywordSearch);
+      const curriculums = await curriculumClient.getCurriculums();
+
+      commit("updateCurriculumData", curriculums);
+
       commit("updateKeywordSearch", keywordSearch);
     },
 
     async updateCurriculum({ commit }, curriculumObject) {
-      const curriculums = await curriculumClient.updateCurriculum(curriculumObject);
+      await curriculumClient.updateCurriculum(curriculumObject);
+      const curriculums = await curriculumClient.getCurriculums();
 
       commit("updateCurriculumData", curriculums);
     }
@@ -53,18 +61,7 @@ export default {
 
   getters: {
     curriculums(state) {
-      const keywordInLowerCase = state.keywordSearch.toLowerCase();
-      if (keywordInLowerCase === "") {
-        return state.curriculums;
-      }
-      else {
-        return state.curriculums.filter(c => {
-          return c.Faculty.Faculty?.toLowerCase().includes(keywordInLowerCase)
-            || c.Speciality.Faculty?.toLowerCase().includes(keywordInLowerCase)
-            || c.Course.Faculty?.toLowerCase().includes(keywordInLowerCase)
-            || c.Group.Faculty?.toLowerCase().includes(keywordInLowerCase);
-        });
-      }
+      return state.curriculums;
     },
 
     keywordSearch(state) {

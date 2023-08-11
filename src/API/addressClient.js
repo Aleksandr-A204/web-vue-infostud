@@ -11,12 +11,14 @@ class AddressClient {
     });
 
     alert(response.data);
-
-    return this.getAddresses();
   }
 
   async getAddresses() {
-    const response = await axios.get(`${API_URL}/address`);
+    const response = await axios.get(`${API_URL}/address`, {
+      params: {
+        keywordSearch: this.keywordSearch
+      }
+    });
 
     return response.data;
   }
@@ -25,8 +27,10 @@ class AddressClient {
     const response = await axios.delete(`${API_URL}/address/${addressId}`);
 
     alert(response.data);
+  }
 
-    return this.getAddresses();
+  setKeywordSearch(keywordSearch) {
+    this.keywordSearch = keywordSearch;
   }
 
   async updateAddress(addressObject) {
@@ -38,8 +42,6 @@ class AddressClient {
     });
 
     alert(response.data);
-
-    return this.getAddresses();
   }
 }
 

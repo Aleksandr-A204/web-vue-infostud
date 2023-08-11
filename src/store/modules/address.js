@@ -29,29 +29,30 @@ export default {
     },
 
     async createAddress({ commit }, objectAddress) {
-      const addresses = await addressClient.createAddress(objectAddress);
+      await addressClient.createAddress(objectAddress);
+      const addresses = await addressClient.getAddresses();
 
       commit("updateAddressData", addresses);
     },
 
     async deleteAddress({ commit }, addressId) {
-      try {
-        const addresses = await addressClient.deleteAddress(addressId);
+      await addressClient.deleteAddress(addressId);
+      const addresses = await addressClient.getAddresses();
 
-        commit("updateAddressData", addresses);
-      }
-      catch (err) {
-        console.log(err);
-        alert("Невозможно удалить.");
-      }
+      commit("updateAddressData", addresses);
     },
 
-    keywordSearch({ commit }, keywordSearch) {
+    async keywordSearch({ commit }, keywordSearch) {
+      addressClient.setKeywordSearch(keywordSearch);
+      const addresses = await addressClient.getAddresses();
+      commit("updateAddressData", addresses);
+
       commit("updateKeywordSearch", keywordSearch);
     },
 
     async updateAddress({ commit }, objectAddress) {
-      const addresses = await addressClient.updateAddress(objectAddress);
+      await addressClient.updateAddress(objectAddress);
+      const addresses = await addressClient.getAddresses();
 
       commit("updateAddressData", addresses);
     }
@@ -59,17 +60,7 @@ export default {
 
   getters: {
     addresses(state) {
-      const wordInLowerCase = state.keywordSearch.toLowerCase();
-      if (wordInLowerCase === "") {
-        return state.addresses;
-      }
-      else {
-        return state.addresses.filter(a => {
-          return a.City.City?.toLowerCase().includes(wordInLowerCase)
-          || a.Postindex.Postindex?.toLowerCase().includes(wordInLowerCase)
-          || a.Street.Street?.toLowerCase().includes(wordInLowerCase);
-        });
-      }
+      return state.addresses;
     },
 
     keywordSearch(state) {

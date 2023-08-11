@@ -3,12 +3,8 @@ import axios from "axios";
 const API_URL = "http://localhost:5053/api";
 
 class StudentClient {
-  setKeywordSearch(keywordSearch) {
-    this.keywordSearch = keywordSearch;
-  }
-
   async addNewStudent(newStudent) {
-    const responce = await axios.post(`${API_URL}/student`, {
+    const response = await axios.post(`${API_URL}/student`, {
       City: newStudent.address.city,
       Postindex: newStudent.address.postindex,
       Street: newStudent.address.street,
@@ -16,20 +12,22 @@ class StudentClient {
       Faculty: newStudent.curriculum.faculty,
       Group: newStudent.curriculum.group,
       Speciality: newStudent.curriculum.speciality,
-      Contact: {
-        Email: newStudent.contact.email,
-        Phone: newStudent.contact.phone
-      },
+      Email: newStudent.contact.email,
+      Phone: newStudent.contact.phone,
       FullName: newStudent.fullname
     });
 
-    alert(responce.data);
-
-    return this.getStudents();
+    alert(response.data);
   }
 
   async getStudents() {
-    const response = await axios.get(`${API_URL}/student/1`);
+    const response = await axios.get(`${API_URL}/student`, {
+      params: {
+        keywordSearch: this.keywordSearch,
+        sortProperty: this.column?.property,
+        sortType: this.column?.sort
+      }
+    });
 
     return response.data;
   }
@@ -38,8 +36,14 @@ class StudentClient {
     const responce = await axios.delete(`${API_URL}/student/${studentId}`);
 
     alert(responce.data);
+  }
 
-    return this.getStudents();
+  setKeywordSearch(keywordSearch) {
+    this.keywordSearch = keywordSearch;
+  }
+
+  setSort(column) {
+    this.column = column;
   }
 
   async updateStudent(editedStudent) {
@@ -51,17 +55,13 @@ class StudentClient {
       Faculty: editedStudent.curriculum.faculty,
       Group: editedStudent.curriculum.group,
       Speciality: editedStudent.curriculum.speciality,
-      Contact: {
-        Email: editedStudent.contact.email,
-        Phone: editedStudent.contact.phone
-      },
+      Email: editedStudent.contact.email,
+      Phone: editedStudent.contact.phone,
       FullName: editedStudent.fullname,
       Id: editedStudent.id
     });
 
     alert(response.data);
-
-    return this.getStudents();
   }
 }
 
