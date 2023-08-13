@@ -147,7 +147,7 @@ export default {
       }
     },
 
-    columnClick(currentColumn) {
+    async columnClick(currentColumn) {
       for (const column of this.columns) {
         if (column.sort && column.property !== currentColumn.property) {
           column.sort = "None";
@@ -166,7 +166,7 @@ export default {
         break;
       }
 
-      this.$store.dispatch("studentModule/sort", currentColumn);
+      await this.getCurriculumData(currentColumn);
     },
 
     setKeywordSearch(value) {

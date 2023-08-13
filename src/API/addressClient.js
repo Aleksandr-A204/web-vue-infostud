@@ -13,10 +13,13 @@ class AddressClient {
     alert(response.data);
   }
 
-  async getAddresses() {
+  async getAddresses(keywordSearch = "", column) {
+    console.log(column);
     const response = await axios.get(`${API_URL}/address`, {
       params: {
-        keywordSearch: this.keywordSearch
+        keywordSearch: keywordSearch,
+        sortProperty: column?.property,
+        sortType: column?.type
       }
     });
 
@@ -27,10 +30,6 @@ class AddressClient {
     const response = await axios.delete(`${API_URL}/address/${addressId}`);
 
     alert(response.data);
-  }
-
-  setKeywordSearch(keywordSearch) {
-    this.keywordSearch = keywordSearch;
   }
 
   async updateAddress(addressObject) {

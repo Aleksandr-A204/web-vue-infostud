@@ -20,12 +20,12 @@ class StudentClient {
     alert(response.data);
   }
 
-  async getStudents() {
+  async getStudents(keywordSearch = "", column) {
     const response = await axios.get(`${API_URL}/student`, {
       params: {
-        keywordSearch: this.keywordSearch,
-        sortProperty: this.column?.property,
-        sortType: this.column?.sort
+        keywordSearch: keywordSearch,
+        sortProperty: column?.property,
+        sortType: column?.sort
       }
     });
 
@@ -36,14 +36,6 @@ class StudentClient {
     const responce = await axios.delete(`${API_URL}/student/${studentId}`);
 
     alert(responce.data);
-  }
-
-  setKeywordSearch(keywordSearch) {
-    this.keywordSearch = keywordSearch;
-  }
-
-  setSort(column) {
-    this.column = column;
   }
 
   async updateStudent(editedStudent) {

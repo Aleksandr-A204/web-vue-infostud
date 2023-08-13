@@ -22,38 +22,37 @@ export default {
   },
 
   actions: {
-    async getAddressData({ commit }) {
-      const addresses = await addressClient.getAddresses();
+    async getAddressData({ commit, state }, column) {
+      const addresses = await addressClient.getAddresses(state.keywordSearch, column);
 
       commit("updateAddressData", addresses);
     },
 
-    async createAddress({ commit }, objectAddress) {
-      await addressClient.createAddress(objectAddress);
-      const addresses = await addressClient.getAddresses();
+    async createAddress({ commit, state }, address) {
+      await addressClient.createAddress(address);
 
+      const addresses = await addressClient.getAddresses(state.keywordSearch);
       commit("updateAddressData", addresses);
     },
 
-    async deleteAddress({ commit }, addressId) {
+    async deleteAddress({ commit, state }, addressId) {
       await addressClient.deleteAddress(addressId);
-      const addresses = await addressClient.getAddresses();
 
+      const addresses = await addressClient.getAddresses(state.keywordSearch);
       commit("updateAddressData", addresses);
     },
 
     async keywordSearch({ commit }, keywordSearch) {
-      addressClient.setKeywordSearch(keywordSearch);
-      const addresses = await addressClient.getAddresses();
-      commit("updateAddressData", addresses);
-
       commit("updateKeywordSearch", keywordSearch);
+
+      const addresses = await addressClient.getAddresses(keywordSearch);
+      commit("updateAddressData", addresses);
     },
 
-    async updateAddress({ commit }, objectAddress) {
-      await addressClient.updateAddress(objectAddress);
-      const addresses = await addressClient.getAddresses();
+    async updateAddress({ commit, state }, address) {
+      await addressClient.updateAddress(address);
 
+      const addresses = await addressClient.getAddresses(state.keywordSearch);
       commit("updateAddressData", addresses);
     }
   },

@@ -153,16 +153,16 @@ export default {
   },
 
   async mounted() {
-    await this.getAllStudents();
+    await this.getStudents();
   },
 
   methods: {
     ...mapActions({
       deleteStudent: "studentModule/deleteStudent",
-      getAllStudents: "studentModule/getAllStudents"
+      getStudents: "studentModule/getStudents"
     }),
 
-    columnClick(currentColumn) {
+    async columnClick(currentColumn) {
       for (const column of this.columns) {
         if (column.sort && column.property !== currentColumn.property) {
           column.sort = "None";
@@ -181,7 +181,7 @@ export default {
         break;
       }
 
-      this.$store.dispatch("studentModule/sort", currentColumn);
+      await this.getStudents(currentColumn);
     },
 
     confirmDeleteStudent(studentId) {

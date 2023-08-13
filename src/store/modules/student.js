@@ -7,16 +7,11 @@ export default {
   namespaced: true,
 
   state: {
-    column: {},
     keywordSearch: "",
     students: []
   },
 
   mutations: {
-    updateSort(state, column) {
-      state.column = column;
-    },
-
     updateSearchKeyword(state, keywordSearch) {
       state.keywordSearch = keywordSearch;
     },
@@ -27,22 +22,22 @@ export default {
   },
 
   actions: {
-    async addNewStudent({ commit }, student) {
+    async addNewStudent({ commit, state }, student) {
       await studentClient.addNewStudent(student);
-      const students = await studentClient.getStudents();
 
+      const students = await studentClient.getStudents(state.keywordSearch);
       commit("updateStudentData", students);
     },
 
-    async deleteStudent({ commit }, studentId) {
+    async deleteStudent({ commit, state }, studentId) {
       await studentClient.deleteStudent(studentId);
-      const students = await studentClient.getStudents();
 
+      const students = await studentClient.getStudents(state.keywordSearch);
       commit("updateStudentData", students);
     },
 
-    async getAllStudents({ commit }) {
-      const students = await studentClient.getStudents();
+    async getStudents({ commit, state }, column) {
+      const students = await studentClient.getStudents(state.keywordSearch, column);
 
       commit("updateStudentData", students);
     },
@@ -50,24 +45,13 @@ export default {
     async keywordSearch({ commit }, keywordSearch) {
       commit("updateSearchKeyword", keywordSearch);
 
-      studentClient.setKeywordSearch(keywordSearch);
-
-      const students = await studentClient.getStudents();
+      const students = await studentClient.getStudents(keywordSearch);
       commit("updateStudentData", students);
     },
 
-    async sort({ commit, state }, column) {
-      commit("updateSort", column);
-
-      studentClient.setSort(state.column);
-
-      const students = await studentClient.getStudents();
-      commit("updateStudentData", students);
-    },
-
-    async updateStudent({ commit }, student) {
+    async updateStudent({ commit, state }, student) {
       await studentClient.updateStudent(student);
-      const students = await studentClient.getStudents();
+      const students = await studentClient.getStudents(state.keywordSearch);
 
       commit("updateStudentData", students);
     }

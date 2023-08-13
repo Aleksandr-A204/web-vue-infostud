@@ -60,7 +60,7 @@ export default {
   }
 
   .navigation{
-    height: 45px;
+    display: flex;
 
     .button-nav{
       background-color: #87CEEB;

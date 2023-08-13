@@ -22,39 +22,37 @@ export default {
   },
 
   actions: {
-    async createCurriculum({ commit }, curriculumObject) {
-      await curriculumClient.createCurriculum(curriculumObject);
-      const curriculums = await curriculumClient.getCurriculums();
+    async createCurriculum({ commit, state }, curriculum) {
+      await curriculumClient.createCurriculum(curriculum);
 
+      const curriculums = await curriculumClient.getCurriculums(state.keywordSearch);
       commit("updateCurriculumData", curriculums);
     },
 
-    async deleteCurriculum({ commit }, curriculumId) {
+    async deleteCurriculum({ commit, state }, curriculumId) {
       await curriculumClient.deleteCurriculum(curriculumId);
-      const curriculums = await curriculumClient.getCurriculums();
+
+      const curriculums = await curriculumClient.getCurriculums(state.keywordSearch);
+      commit("updateCurriculumData", curriculums);
+    },
+
+    async curriculumData({ commit, state }, column) {
+      const curriculums = await curriculumClient.getCurriculums(state.keywordSearch, column);
 
       commit("updateCurriculumData", curriculums);
     },
 
-    async curriculumData({ commit }) {
-      const curriculums = await curriculumClient.getCurriculums();
-
-      commit("updateCurriculumData", curriculums);
-    },
-
-    async keywordSearch({ commit }, keywordSearch) {
-      curriculumClient.setKeywordSearch(keywordSearch);
-      const curriculums = await curriculumClient.getCurriculums();
-
-      commit("updateCurriculumData", curriculums);
-
+    async keywordSearch({ commit, state }, keywordSearch) {
       commit("updateKeywordSearch", keywordSearch);
+
+      const curriculums = await curriculumClient.getCurriculums(state.keywordSearch);
+      commit("updateCurriculumData", curriculums);
     },
 
-    async updateCurriculum({ commit }, curriculumObject) {
-      await curriculumClient.updateCurriculum(curriculumObject);
-      const curriculums = await curriculumClient.getCurriculums();
+    async updateCurriculum({ commit, state }, curriculum) {
+      await curriculumClient.updateCurriculum(curriculum);
 
+      const curriculums = await curriculumClient.getCurriculums(state.keywordSearch);
       commit("updateCurriculumData", curriculums);
     }
   },
