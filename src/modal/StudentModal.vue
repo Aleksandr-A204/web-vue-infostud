@@ -1,319 +1,162 @@
 <template>
-  <SlotModal
-    :current-object="studentObject"
+  <Modal
+    :title="studentObject?.id ? 'Редактирование студента' : 'Создание студента'"
     @close="$emit('close')"
     @saveData="saveSudentData"
   >
-    <div class="inside-modal__content">
-      <div>
-        <p class="p">
-          Студент
-        </p>
-        <div class="block-group">
-          <label class="form-label">ФИО:</label>
-          <input
-            v-model="currentObject.fullname"
-            type="text"
-            class="form-control"
-          >
-        </div>
-        <p class="p">
-          Адрес
-        </p>
-        <div class="block-group">
-          <label class="form-label">Город:</label>
-          <select
-            v-model="currentObject.address.city"
-            class="form-select"
-            @click="hidenStreetAndIndex"
-          >
-            <option
-              v-for="c of cities"
-              :key="c.City"
-            >
-              {{ c.City }}
-            </option>
-          </select>
-        </div>
-        <div
-          v-if="currentObject.address.city"
-          class="block-group"
+    <div
+      v-for="(row, index) of rows"
+      :key="`content-row-${index}`"
+      class="block-group"
+    >
+      <label class="form-label">{{ row.label }}</label>
+
+      <div v-if="row.formType === 'select'">
+        <select
+          :value="getValue(row.property)"
+          class="form-select"
+          @input="event => setProperty(row.property, event)"
         >
-          <label class="form-label">Улица:</label>
-          <select
-            v-model="currentObject.address.street"
-            class="form-select"
-            @click="hidenIndex"
+          <option
+            v-for="(element, secondIndex) of dropdownList[row.property]"
+            :key="`drop-down-list-${secondIndex}`"
           >
-            <option
-              v-for="s in streets"
-              :key="s.Id"
-            >
-              {{ s.Street }}
-            </option>
-          </select>
-        </div>
-        <div
-          v-if="currentObject.address.street"
-          class="block-group"
+            {{ element[row.property] }}
+          </option>
+        </select>
+      </div>
+      <div v-else>
+        <input
+          :value="getValue(row.property)"
+          type="text"
+          class="form-control"
+          @input="event => setProperty(row.property, event)"
         >
-          <label class="form-label">Почтовый индекс:</label>
-          <select
-            v-model="currentObject.address.postindex"
-            class="form-select"
-          >
-            <option
-              v-for="postindex in postindexes"
-              :key="postindex.Id"
-            >
-              {{ postindex.PostIndex }}
-            </option>
-          </select>
-        </div>
-        <p class="p">
-          Учебный план
-        </p>
-        <div class="block-group">
-          <label class="form-label">Факультет:</label>
-          <select
-            v-model="currentObject.curriculum.faculty"
-            class="form-select"
-            @click="hidenSpecialityCourseGroup"
-          >
-            <option
-              v-for="f in faculties"
-              :key="f.Id"
-            >
-              {{ f.Faculty }}
-            </option>
-          </select>
-        </div>
-        <div
-          v-if="currentObject.curriculum.faculty"
-          class="block-group"
-        >
-          <label class="form-label">Специальность:</label>
-          <select
-            v-model="currentObject.curriculum.speciality"
-            class="form-select"
-            @click="hidenCourseGroup"
-          >
-            <option
-              v-for="s in specialities"
-              :key="s.Id"
-            >
-              {{ s.Speciality }}
-            </option>
-          </select>
-        </div>
-        <div
-          v-if="currentObject.curriculum.speciality"
-          class="block-group"
-        >
-          <label class="form-label">Курс:</label>
-          <select
-            v-model="currentObject.curriculum.course"
-            class="form-select"
-            @click="hidenGroup"
-          >
-            <option
-              v-for="c in courses"
-              :key="c.Id"
-            >
-              {{ c.Course }}
-            </option>
-          </select>
-        </div>
-        <div
-          v-if="currentObject.curriculum.course"
-          class="block-group"
-        >
-          <label class="form-label">Группа:</label>
-          <select
-            v-model="currentObject.curriculum.group"
-            class="form-select"
-          >
-            <option
-              v-for="g in groups"
-              :key="g.Id"
-            >
-              {{ g.Group }}
-            </option>
-          </select>
-        </div>
-        <p class="p">
-          Контакт
-        </p>
-        <div class="block-group">
-          <label class="form-label">Номер телефона:</label>
-          <input
-            v-model="currentObject.contact.phone"
-            type="text"
-            class="form-control"
-          >
-        </div>
-        <div class="block-group">
-          <label class="form-label">Эл. почта:</label>
-          <input
-            v-model="currentObject.contact.email"
-            type="text"
-            class="form-control"
-          >
-        </div>
       </div>
     </div>
-  </SlotModal>
+  </Modal>
 </template>
 
 <script>
 import _ from "lodash";
-import SlotModal from "./Modal.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
-  components: {
-    SlotModal
-  },
-
   props: {
+    rows: {
+      type: Array,
+      required: true
+    },
+
     studentObject: {
       type: Object,
-      default: () => {}
+      required: true
     }
   },
 
   data() {
     return {
-      currentObject: null
+      object: null,
+      dropdownList: {}
     };
   },
 
   computed: {
     ...mapGetters({
       addresses: "addressModule/addresses",
-      courses: "curriculumModule/courses",
       curriculums: "curriculumModule/curriculums"
     }),
 
     cities() {
-      return _.uniqBy(_.map(this.addresses, "City"), "City");
-    },
-
-    courses() {
-      return this.currentObject.curriculum.speciality ? _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.currentObject.curriculum.faculty },
-        Speciality: { Speciality: this.currentObject.curriculum.speciality } }), "Course"), "Course") : _.sortBy(_.uniqBy(_.map(this.curriculums, "Course"), "Course"), "Course");
-    },
-
-    faculties() {
-      return _.uniqBy(_.map(this.curriculums, "Faculty"), "Faculty");
-    },
-
-    groups() {
-      return this.currentObject.curriculum.course ? _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.currentObject.curriculum.faculty },
-        Speciality: { Speciality: this.currentObject.curriculum.speciality }, Course: { Course: this.currentObject.curriculum.course } }), "Group"), "Group") :
-        _.uniqBy(_.map(this.curriculums, "Group"), "Group");
-    },
-
-    postindexes() {
-      return this.currentObject.address.street ? _.uniqBy(_.map(_.filter(this.addresses, { City: { City: this.currentObject.address.city },
-        Street: { Street: this.currentObject.address.street } }), "Postindex"), "PostIndex") : _.uniqBy(_.map(this.addresses, "Postindex"), "PostIndex");
-    },
-
-    specialities() {
-      return this.currentObject.curriculum.faculty ? _.uniqBy(_.map(_.filter(this.curriculums, { Faculty: { Faculty: this.currentObject.curriculum.faculty } }), "Speciality"), "Speciality") :
-        _.uniqBy(_.map(this.curriculums, "Speciality"), "Speciality");
+      return _.uniqBy(_.map(this.addresses, "city"), "city");
     },
 
     streets() {
-      return this.currentObject.address.city ? _.uniqBy(_.map(_.filter(this.addresses, { City: { City: this.currentObject.address.city } }), "Street"), "Street") :
-        _.uniqBy(_.map(this.addresses, "Street"), "Street");
+      return this.object.city ? _.uniqBy(_.map(_.filter(this.addresses, { city: { city: this.object.city } }), "street"), "street") :
+        _.uniqBy(_.map(this.addresses, "street"), "street");
+    },
+
+    postindexes() {
+      return this.object.street ? _.uniqBy(_.map(_.filter(this.addresses, { city: { city: this.object.city },
+        street: { street: this.object.street } }), "postindex"), "postindex") : _.uniqBy(_.map(this.addresses, "postindex"), "postindex");
+    },
+
+    faculties() {
+      return _.uniqBy(_.map(this.curriculums, "faculty"), "faculty");
+    },
+
+    specialities() {
+      return this.object.faculty ? _.uniqBy(_.map(_.filter(this.curriculums, { faculty: { faculty: this.object.faculty } }), "speciality"), "speciality") :
+        _.uniqBy(_.map(this.curriculums, "speciality"), "speciality");
+    },
+
+    courses() {
+      return this.object.speciality ? _.uniqBy(_.filter(this.curriculums, { faculty: { faculty: this.object.faculty },
+        speciality: { speciality: this.object.speciality } }), "course") : _.sortBy(_.uniqBy(this.curriculums, "course"), "course");
+    },
+
+    groups() {
+      return this.object.course ? _.uniqBy(_.filter(this.curriculums, { faculty: { faculty: this.object.faculty },
+        speciality: { speciality: this.object.speciality }, course: this.object.course }), "group") :
+        _.uniqBy(this.curriculums, "group");
     }
   },
 
+  // watch: {
+  //   studentObject: {
+  //     immediate: true,
+  //     handler(value) {
+  //       this.object = _.cloneDeep(value);
+  //     }
+  //   }
+  // },
+
   created() {
-    this.currentObject = {
-      address: {
-        city: this.studentObject?.City,
-        postindex: this.studentObject?.Postindex,
-        street: this.studentObject?.Street
-      },
-      curriculum: {
-        faculty: this.studentObject?.Faculty,
-        speciality: this.studentObject?.Speciality,
-        course: this.studentObject?.Course,
-        group: this.studentObject?.Group
-      },
-      contact: {
-        phone: this.studentObject?.Phone,
-        email: this.studentObject?.Email
-      },
-      fullname: this.studentObject?.FullName,
-      id: this.studentObject?.Id
-    };
+    this.object = { ...this.studentObject };
   },
 
   async mounted() {
     await this.getAddressData();
     await this.getCurriculumData();
+
+    this.dropdownList = {
+      city: this.cities,
+      street: this.streets
+    };
   },
 
   methods: {
     ...mapActions({
       getAddressData: "addressModule/getAddressData",
       getCurriculumData: "curriculumModule/curriculumData",
-      addNewStudent: "studentModule/addNewStudent",
+      createStudent: "studentModule/addNewStudent",
       updateStudent: "studentModule/updateStudent"
     }),
 
-    hidenStreetAndIndex(event) {
-      if (!event.pointerId) {
-        this.currentObject.address.street = null;
-        this.currentObject.address.postindex = null;
-      }
+    getValue(property) {
+      return _.get(this.object, property);
     },
 
-    hidenIndex(event) {
-      if (!event.pointerId) {
-        this.currentObject.address.postindex = null;
-      }
-    },
-
-    hidenSpecialityCourseGroup(event) {
-      if (!event.pointerId) {
-        this.currentObject.curriculum.speciality = null;
-        this.currentObject.curriculum.course = null;
-        this.currentObject.curriculum.group = null;
-      }
-    },
-
-    hidenCourseGroup(event) {
-      if (!event.pointerId) {
-        this.currentObject.curriculum.course = null;
-        this.currentObject.curriculum.group = null;
-      }
-    },
-
-    hidenGroup(event) {
-      if (!event.pointerId) {
-        this.currentObject.curriculum.group = null;
-      }
+    setProperty(property, event) {
+      _.set(this.object, property, event.target.value);
     },
 
     saveSudentData() {
-      if (this.currentObject.fullname && this.currentObject.address.city && this.currentObject.address.street && this.currentObject.address.postindex
-       && this.currentObject.curriculum.faculty && this.currentObject.curriculum.speciality && this.currentObject.curriculum.course && this.currentObject.curriculum.group
-        && this.currentObject.contact.phone && this.currentObject.contact.email) {
-        if (this.currentObject.id) {
-          this.updateStudent(this.currentObject);
-        }
-        else {
-          this.addNewStudent(this.currentObject);
-        }
-        this.$emit("close");
-      }
-      else {
-        alert("Заполните все поля!");
-      }
+      console.log(this.object);
+      // if (object.fullName && object.city && object.street && object.postindex
+      //  && object.faculty && object.speciality && object.course && object.group
+      //   && object.phone && object.email) {
+      //   if (object.id) {
+      //     this.updateStudent(object);
+      //   }
+      //   else {
+      //     this.createStudent(object);
+      //   }
+      //   this.$emit("close");
+      // }
+      // else {
+      //   alert("Заполните все поля!");
+      // }
     }
   }
 };

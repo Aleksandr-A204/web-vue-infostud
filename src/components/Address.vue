@@ -6,7 +6,7 @@
     >
       <button
         class="button"
-        @click="addAddress"
+        @click="addAddress()"
       >
         Добавить адрес
       </button>
@@ -39,7 +39,7 @@
         </button>
         <button
           class="button"
-          @click="confirmDeleteAddress(element.Id)"
+          @click="confirmDeleteAddress(element.id)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -56,14 +56,9 @@
     </CustomTable>
 
     <AddressModal
-      v-if="showAddModal"
-      @close="showAddModal = false"
-    />
-
-    <AddressModal
-      v-if="showEditModal"
+      v-if="showModal"
       :address-object="selectedAddress"
-      @close="showEditModal = false"
+      @close="showModal = false"
     />
   </div>
 </template>
@@ -72,40 +67,36 @@
 import AddressModal from "../modal/AddressModal.vue";
 import { mapActions, mapGetters } from "vuex";
 
-import CustomTable from "./Table.vue";
-import Search from "./Search.vue";
+import _ from "lodash";
 
 export default {
   components: {
-    AddressModal,
-    CustomTable,
-    Search
+    AddressModal
   },
 
   data() {
     return {
-      showAddModal: false,
-      showEditModal: false,
+      showModal: false,
+      selectedAddress: {},
       columns: [
         {
           label: "Id",
-          property: "Id",
-          sort: "None"
+          property: "id"
         },
         {
           label: "Город",
-          property: "City.City",
-          sort: "None"
+          property: "city.city",
+          formType: "select"
         },
         {
           label: "Почтовый индекс",
-          property: "Postindex.PostIndex",
-          sort: "None"
+          property: "postindex.postindex",
+          formType: "select"
         },
         {
           label: "Улица",
-          property: "Street.Street",
-          sort: "None"
+          property: "street.street",
+          formType: "select"
         },
         {
           label: "Действия",
@@ -131,7 +122,9 @@ export default {
     }),
 
     addAddress() {
-      this.showAddModal = true;
+      this.selectedAddress = {};
+
+      this.showModal = true;
     },
 
     confirmDeleteAddress(addressId) {
@@ -162,10 +155,19 @@ export default {
       await this.getAddressData(currentColumn);
     },
 
-    editAddress(selectedAddress) {
-      this.selectedAddress = selectedAddress;
+    editAddress(address) {
+      this.selectedAddress = { ... address };
 
-      this.showEditModal = true;
+      for (const column of this.columns.toSpliced(-1)) {
+        if (column.property.indexOf(".") > 0) {
+          this.selectedAddress[column.property.slice(0, column.property.indexOf("."))] = _.get(address, column.property);
+        }
+        else {
+          this.selectedAddress[column.property] = _.get(address, column.property);
+        }
+      }
+
+      this.showModal = true;
     },
 
     setKeywordSearch(value) {

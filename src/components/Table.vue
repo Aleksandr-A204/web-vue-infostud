@@ -58,13 +58,8 @@
 
 <script>
 import _ from "lodash";
-import { Icon } from "@iconify/vue2";
 
 export default {
-  components: {
-    Icon
-  },
-
   props: {
     columns: {
       type: Array,

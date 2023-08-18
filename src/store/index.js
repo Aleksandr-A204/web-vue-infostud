@@ -1,6 +1,5 @@
 import addressModule from "./modules/address.js";
 import cityModule from "./modules/city.js";
-import contactModule from "./modules/contact.js";
 import courseModule from "./modules/course.js";
 import curriculumModule from "./modules/curriculum.js";
 import facultyModule from "./modules/faculty.js";
@@ -20,7 +19,6 @@ export default new Vuex.Store({
     cityModule,
     postindexModule,
     streetModule,
-    contactModule,
     curriculumModule,
     studentModule,
     facultyModule,

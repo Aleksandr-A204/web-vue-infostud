@@ -1,80 +1,35 @@
 <template>
-  <SlotModal
+  <Modal
+    :title="addressObject?.id ? 'Редактирование адреса' : 'Создание адреса'"
     :current-object="addressObject"
+    :rows="rows"
+    :list="{ city: cities, postindex: postindexes, street: streets }"
     @close="$emit('close')"
-    @saveData="saveAddressData"
-  >
-    <div class="inside-modal__content">
-      <div>
-        <div class="block-group">
-          <label class="label-group">Город:</label>
-          <select
-            v-model="currentObject.cityId"
-            class="form-select"
-          >
-            <option
-              v-for="c in cities"
-              :key="c.Id"
-              :value="c.Id"
-            >
-              {{ c.City }}
-            </option>
-          </select>
-        </div>
-        <div class="block-group">
-          <label class="label-group">Почтовый индекс:</label>
-          <select
-            v-model="currentObject.postindexId"
-            class="form-select"
-          >
-            <option
-              v-for="p in postindexes"
-              :key="p.Id"
-              :value="p.Id"
-            >
-              {{ p.PostIndex }}
-            </option>
-          </select>
-        </div>
-        <div class="block-group">
-          <label class="label-group">Улица:</label>
-          <select
-            v-model="currentObject.streetId"
-            class="form-select"
-          >
-            <option
-              v-for="s in streets"
-              :key="s.Id"
-              :value="s.Id"
-            >
-              {{ s.Street }}
-            </option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </SlotModal>
+    @saveData="saveData"
+  />
 </template>
 
 <script>
-import SlotModal from "./Modal.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
-  components: {
-    SlotModal
-  },
-
   props: {
     addressObject: {
       type: Object,
-      default: () => {}
+      required: true
     }
   },
 
   data() {
     return {
-      currentObject: null
+      currentObject: null,
+
+      rows: [
+        { id: "cityId", label: "Город", property: "city", formType: "select", isPropertyById: true },
+        { id: "postindexId", label: "Почтовый индекс", property: "postindex", formType: "select", isPropertyById: true },
+        { id: "streetId", label: "Улица", property: "street", formType: "select", isPropertyById: true }
+      ]
+
     };
   },
 
@@ -84,15 +39,6 @@ export default {
       cities: "cityModule/cities",
       postindexes: "postindexModule/postindexes"
     })
-  },
-
-  created() {
-    this.currentObject = {
-      id: this.addressObject?.Id,
-      cityId: this.addressObject?.CityId,
-      streetId: this.addressObject?.StreetId,
-      postindexId: this.addressObject?.PostindexId
-    };
   },
 
   async mounted() {
@@ -110,13 +56,13 @@ export default {
       updateAddress: "addressModule/updateAddress"
     }),
 
-    saveAddressData() {
-      if (this.currentObject.cityId && this.currentObject.streetId && this.currentObject.postindexId) {
-        if (this.currentObject.id) {
-          this.updateAddress(this.currentObject);
+    saveData(object) {
+      if (object.cityId && object.streetId && object.postindexId) {
+        if (object.id) {
+          this.updateAddress(object);
         }
         else {
-          this.createAddress(this.currentObject);
+          this.createAddress(object);
         }
 
         this.$emit("close");

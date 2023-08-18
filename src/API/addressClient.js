@@ -5,21 +5,18 @@ const API_URL = "http://localhost:5053/api";
 class AddressClient {
   async createAddress(addressObject) {
     const response = await axios.post(`${API_URL}/address`, {
-      CityId: addressObject.cityId,
-      PostindexId: addressObject.postindexId,
-      StreetId: addressObject.streetId
+      cityId: addressObject.cityId,
+      postindexId: addressObject.postindexId,
+      streetId: addressObject.streetId
     });
 
     alert(response.data);
   }
 
-  async getAddresses(keywordSearch = "", column) {
-    console.log(column);
+  async getAddresses(keywordSearch = "") {
     const response = await axios.get(`${API_URL}/address`, {
       params: {
-        keywordSearch: keywordSearch,
-        sortProperty: column?.property,
-        sortType: column?.type
+        keywordSearch: keywordSearch
       }
     });
 
@@ -34,10 +31,10 @@ class AddressClient {
 
   async updateAddress(addressObject) {
     const response = await axios.put(`${API_URL}/address`, {
-      Id: addressObject.id,
-      CityId: addressObject.cityId,
-      PostindexId: addressObject.postindexId,
-      StreetId: addressObject.streetId
+      id: addressObject.id,
+      cityId: addressObject.cityId,
+      postindexId: addressObject.postindexId,
+      streetId: addressObject.streetId
     });
 
     alert(response.data);

@@ -6,7 +6,7 @@
     >
       <button
         class="button"
-        @click="showAddModal = true"
+        @click="addCurriculum()"
       >
         Добавить курс обучения
       </button>
@@ -39,7 +39,7 @@
         </button>
         <button
           class="button"
-          @click="confirmDeleteCurriculum(element.Id)"
+          @click="confirmDeleteCurriculum(element.id)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -56,61 +56,44 @@
     </CustomTable>
 
     <CurriculumModal
-      v-if="showAddModal"
-      @close="showAddModal = false"
-    />
-
-    <CurriculumModal
-      v-if="showEditModal"
+      v-if="showModal"
       :curriculum-object="selectedCurriculum"
-      @close="showEditModal = false"
+      @close="showModal = false"
     />
   </div>
 </template>
 
 <script>
-import CurriculumModal from "../modal/CurriculumModal.vue";
+import _ from "lodash";
 import { mapActions, mapGetters } from "vuex";
 
-import CustomTable from "./Table.vue";
-import Search from "./Search.vue";
+import CurriculumModal from "../modal/CurriculumModal.vue";
 
 export default {
   components: {
-    CurriculumModal,
-    CustomTable,
-    Search
+    CurriculumModal
   },
 
   data() {
     return {
-      showAddModal: false,
-      showEditModal: false,
+      showModal: false,
+      selectedCurriculum: {},
       columns: [
         {
-          label: "Id",
-          property: "Id",
-          sort: "None"
-        },
-        {
           label: "Факультет",
-          property: "Faculty.Faculty",
-          sort: "None"
+          property: "faculty.faculty"
         },
         {
           label: "Специальность",
-          property: "Speciality.Speciality",
-          sort: "None"
+          property: "speciality.speciality"
         },
         {
           label: "Курс",
-          property: "Course.Course",
-          sort: "None"
+          property: "course"
         },
         {
           label: "Группа",
-          property: "Group.Group",
-          sort: "None"
+          property: "group"
         },
         {
           label: "Действия",
@@ -127,6 +110,8 @@ export default {
 
   async mounted() {
     await this.getCurriculumData();
+
+    console.log(this.curriculums);
   },
 
   methods: {
@@ -135,10 +120,18 @@ export default {
       getCurriculumData: "curriculumModule/curriculumData"
     }),
 
-    editCurriculum(selectedCurriculum) {
-      this.selectedCurriculum = selectedCurriculum;
+    addCurriculum() {
+      this.selectedCurriculum = {};
 
-      this.showEditModal = true;
+      this.showModal = true;
+    },
+
+    editCurriculum(curriculum) {
+      for (const column of this.columns.toSpliced(-1)) {
+        this.selectedCurriculum[column.property.slice(0, column.property.indexOf("."))] = _.get(curriculum, column.property);
+      }
+
+      this.showModal = true;
     },
 
     async confirmDeleteCurriculum(curriculumId) {

@@ -5,9 +5,12 @@ import store from "./store/index.js";
 import Vue from "vue";
 import "material-design-icons-iconfont";
 
+import components from "@/components/extended/components.js";
+
 Vue.config.productionTip = false;
 
 Vue.use(ClickOutside);
+Vue.use(components);
 
 export default new Vue({
   store,

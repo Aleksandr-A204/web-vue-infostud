@@ -14,7 +14,9 @@
         </span>
       </div>
 
-      <slot />
+      <div class="inside-modal__content">
+        <slot />
+      </div>
 
       <div class="inside-modal__footer">
         <button
@@ -37,24 +39,9 @@
 <script>
 export default {
   props: {
-    currentObject: {
-      type: Object,
-      default: () => {}
-    }
-  },
-
-  data() {
-    return {
-      title: null
-    };
-  },
-
-  created() {
-    if (this.currentObject?.Id) {
-      this.title = "Редактирование";
-    }
-    else {
-      this.title = "Создание";
+    title: {
+      type: String,
+      required: true
     }
   },
 
@@ -107,9 +94,7 @@ export default {
     };
 
     &__content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    padding: 25px 75px;
 
       .p {
         color: gray;
@@ -127,6 +112,9 @@ export default {
         align-items: center;
         margin-bottom: 7px;
         font-size: 14px;
+
+        // pointer-events: none;
+        // opacity: 0.4;
 
         .form-label{
           margin-right: 2px;
@@ -148,18 +136,6 @@ export default {
           color: #000;
           height: 19.2px;
           width: 326.21px;
-        }
-
-        .search-box{
-          display: flex;
-          align-items: center;
-          flex-direction: column;
-          justify-content: center;
-          position: relative;
-
-          .hidden{
-            display: none;
-          }
         }
       }
     }

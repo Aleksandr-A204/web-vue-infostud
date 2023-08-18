@@ -6,7 +6,7 @@
     >
       <button
         class="button"
-        @click="showAddModal = true"
+        @click="addStudent()"
       >
         Добавить студента
       </button>
@@ -39,7 +39,7 @@
         </button>
         <button
           class="button"
-          @click="confirmDeleteStudent(element.Id)"
+          @click="confirmDeleteStudent(element.id)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -56,14 +56,10 @@
     </CustomTable>
 
     <StudentModal
-      v-if="showAddModal"
-      @close="showAddModal = false"
-    />
-
-    <StudentModal
-      v-if="showEditModal"
+      v-if="showModal"
+      :rows="columns.toSpliced(-1)"
       :student-object="studentObject"
-      @close="showEditModal = false"
+      @close="showModal = false"
     />
   </div>
 </template>
@@ -72,70 +68,75 @@
 import StudentModal from "../modal/StudentModal.vue";
 import { mapActions, mapGetters } from "vuex";
 
-import CustomTable from "./Table.vue";
-import Search from "./Search.vue";
-
 export default {
   components: {
-    Search,
-    StudentModal,
-    CustomTable
+    StudentModal
   },
 
   data() {
     return {
-      showAddModal: false,
-      showEditModal: false,
+      studentObject: {},
+      showModal: false,
       columns: [
         {
           label: "ФИО",
-          property: "FullName",
-          sort: "None"
+          property: "fullName",
+          sort: "None",
+          formType: "input"
         },
         {
           label: "Город",
-          property: "City",
-          sort: "None"
-        },
-        {
-          label: "Почтовый индекс",
-          property: "Postindex",
-          sort: "None"
+          property: "city",
+          sort: "None",
+          formType: "select"
         },
         {
           label: "Улица",
-          property: "Street",
-          sort: "None"
+          property: "street",
+          sort: "None",
+          formType: "select"
+        },
+        {
+          label: "Почтовый индекс",
+          property: "postindex",
+          sort: "None",
+          formType: "select"
         },
         {
           label: "Факультет",
-          property: "Faculty",
-          sort: "None"
+          property: "faculty",
+          sort: "None",
+          formType: "select"
         },
         {
           label: "Специальность",
-          property: "Speciality",
-          sort: "None"
+          property: "speciality",
+          sort: "None",
+          formType: "select"
         },
         {
           label: "Курс",
-          property: "Course",
-          sort: "None"
+          property: "course",
+          sort: "None",
+          formType: "select"
         },
         {
           label: "Группа",
-          property: "Group",
-          sort: "None"
+          property: "group",
+          sort: "None",
+          formType: "select"
         },
         {
           label: "Телефон",
-          property: "Phone",
-          sort: "None"
+          property: "phone",
+          sort: "None",
+          formType: "input"
         },
         {
           label: "Электронная почта",
-          property: "Email",
-          sort: "None"
+          property: "email",
+          sort: "None",
+          formType: "input"
         },
         {
           label: "Действия",
@@ -161,6 +162,12 @@ export default {
       deleteStudent: "studentModule/deleteStudent",
       getStudents: "studentModule/getStudents"
     }),
+
+    addStudent() {
+      this.studentObject = {};
+
+      this.showModal = true;
+    },
 
     async columnClick(currentColumn) {
       for (const column of this.columns) {
@@ -193,7 +200,7 @@ export default {
     editStudent(selectedStudent) {
       this.studentObject = selectedStudent;
 
-      this.showEditModal = true;
+      this.showModal = true;
     },
 
     setKeywordSearch(value) {

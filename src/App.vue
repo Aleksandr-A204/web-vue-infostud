@@ -20,12 +20,12 @@
         >
           Адрес
         </RouterLink>
-        <RouterLink
+        <!-- <RouterLink
           class="button-nav"
           to="/curriculum"
         >
           Курс обучения
-        </RouterLink>
+        </RouterLink> -->
         <!-- <RouterLink
           class="button-nav"
           to="/contact"
@@ -40,6 +40,9 @@
 
 <script>
 export default {
+  // mounted() {
+  //   document.title = "student";
+  // }
 };
 </script>
 
