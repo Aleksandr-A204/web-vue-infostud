@@ -1,7 +1,5 @@
 <template>
-  <div id="app">
-    <RouterView />
-  </div>
+  <h2>Страница не найдена.</h2>
 </template>
 
 <script>
@@ -10,6 +8,6 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

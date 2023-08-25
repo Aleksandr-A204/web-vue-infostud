@@ -36,7 +36,7 @@ class StudentClient {
     alert(responce.data);
   }
 
-  async updateStudent(editedStudent) {
+  async editStudent(editedStudent) {
     await axios.put(`${API_URL}/student`, {
       city: editedStudent.city,
       postindex: editedStudent.postindex,

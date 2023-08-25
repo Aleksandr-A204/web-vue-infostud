@@ -1,72 +1,51 @@
 <template>
   <div>
-    <Search
-      :value="keywordSearch"
-      @input="setKeywordSearch"
-    >
-      <button
-        class="button"
-        @click="addStudent()"
-      >
+    <div v-if="!$route.path.includes('pages')">
+      <Search
+        :value="keywordSearch"
+        @input="setKeywordSearch"
+      />
+
+      <CustomButton @click="addStudent()">
         Добавить студента
-      </button>
-    </Search>
+      </CustomButton>
 
-    <CustomTable
-      :columns="columns"
-      :elements="students"
-      @columnClick="columnClick"
-    >
-      <template #actions="{ element }">
-        <button
-          class="button"
-          @click="editStudent(element)"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            fill="currentColor"
-            class="bi bi-pencil-square"
-            viewBox="0 0 16 16"
+      <CustomTable
+        :columns="columns"
+        :elements="students"
+        @columnClick="columnClick"
+        @editElement="editStudent"
+        @deleteElement="confirmDeleteStudent"
+      >
+        <template #default="{index}">
+          <RouterLink
+            :key="`page-${index}`"
+            :to="{name: 'main.students.pages', params: {id: index + 1}}"
           >
-            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-            <path
-              fill-rule="evenodd"
-              d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-            />
-          </svg>
-        </button>
-        <button
-          class="button"
-          @click="confirmDeleteStudent(element.id)"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            fill="currentColor"
-            class="bi bi-trash-fill"
-            viewBox="0 0 16 16"
-          >
-            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-          </svg>
-        </button>
-      </template>
-    </CustomTable>
+            <CustomButton>
+              <Icon icon="file-lines" />
+            </CustomButton>
+          </RouterLink>
+        </template>
+      </CustomTable>
 
-    <StudentModal
-      v-if="showModal"
-      :rows="columns.toSpliced(-1)"
-      :student-object="studentObject"
-      @close="showModal = false"
-    />
+      <StudentModal
+        v-if="showModal"
+        :rows="columns.toSpliced(-1)"
+        :student-object="studentObject"
+        @close="showModal = false"
+      />
+    </div>
+
+    <RouterView />
   </div>
 </template>
 
 <script>
 import StudentModal from "../modal/StudentModal.vue";
 import { mapActions, mapGetters } from "vuex";
+
+import _ from "lodash";
 
 export default {
   components: {
@@ -75,7 +54,6 @@ export default {
 
   data() {
     return {
-      studentObject: {},
       showModal: false,
       columns: [
         {
@@ -164,7 +142,7 @@ export default {
     }),
 
     addStudent() {
-      this.studentObject = {};
+      this.studentObject = { };
 
       this.showModal = true;
     },
@@ -198,7 +176,7 @@ export default {
     },
 
     editStudent(selectedStudent) {
-      this.studentObject = selectedStudent;
+      this.studentObject = _.cloneDeep(selectedStudent);
 
       this.showModal = true;
     },

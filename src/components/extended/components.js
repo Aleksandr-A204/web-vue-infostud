@@ -1,11 +1,13 @@
-import { Icon } from "@iconify/vue2";
+import Icon from "@/icons/Icon.vue";
 
+import CustomButton from "@/components/Button.vue";
 import CustomTable from "../Table.vue";
 import Search from "../Search.vue";
 
 import Modal from "@/modal/Modal.vue";
 
 const Components = {
+  CustomButton,
   CustomTable,
   Icon,
   Modal,

@@ -7,13 +7,11 @@
         placeholder="Поиск"
         @input="setKeywordSearch"
       >
-      <button
-        class="button show-change_stud"
-        @click="showAddModal = true"
-      >
-        Добавить контакт
-      </button>
     </div>
+
+    <CustomButton @click="showAddModal = true">
+      Добавить контакт
+    </CustomButton>
 
     <table class="table">
       <thead>

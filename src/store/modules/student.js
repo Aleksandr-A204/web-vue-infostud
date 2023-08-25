@@ -49,8 +49,8 @@ export default {
       commit("updateStudentData", students);
     },
 
-    async updateStudent({ commit, state }, student) {
-      await studentClient.updateStudent(student);
+    async editStudent({ commit, state }, student) {
+      await studentClient.editStudent(student);
       const students = await studentClient.getStudents(state.keywordSearch);
 
       commit("updateStudentData", students);

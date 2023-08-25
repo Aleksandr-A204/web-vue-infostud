@@ -5,6 +5,8 @@ import store from "./store/index.js";
 import Vue from "vue";
 import "material-design-icons-iconfont";
 
+import "./assets/scss/fonts.scss";
+
 import components from "@/components/extended/components.js";
 
 Vue.config.productionTip = false;

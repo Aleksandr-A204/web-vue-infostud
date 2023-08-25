@@ -1,12 +1,33 @@
 <template>
   <Modal
     :title="addressObject?.id ? 'Редактирование адреса' : 'Создание адреса'"
-    :current-object="addressObject"
     :rows="rows"
-    :list="{ city: cities, postindex: postindexes, street: streets }"
+    :object="addressObject"
+    :dropdown="{city: cities, street: streets, postindex: postindexes }"
     @close="$emit('close')"
     @saveData="saveData"
-  />
+  >
+    <!-- <div
+      v-for="(row, index) of rows"
+      :key="`content-row-${index}`"
+      class="block-group"
+    >
+      <label class="form-label">{{ row.label }}</label>
+
+      <select
+        v-model="currentObject[row.propertyId]"
+        class="form-select"
+      >
+        <option
+          v-for="(element, secondIndex) of dropdown(row.property)"
+          :key="`drop-down-list-${secondIndex}`"
+          :value="element.id"
+        >
+          {{ element[row.property] }}
+        </option>
+      </select>
+    </div> -->
+  </Modal>
 </template>
 
 <script>
@@ -14,6 +35,11 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
   props: {
+    rows: {
+      type: Array,
+      required: true
+    },
+
     addressObject: {
       type: Object,
       required: true
@@ -22,14 +48,7 @@ export default {
 
   data() {
     return {
-      currentObject: null,
-
-      rows: [
-        { id: "cityId", label: "Город", property: "city", formType: "select", isPropertyById: true },
-        { id: "postindexId", label: "Почтовый индекс", property: "postindex", formType: "select", isPropertyById: true },
-        { id: "streetId", label: "Улица", property: "street", formType: "select", isPropertyById: true }
-      ]
-
+      currentObject: null
     };
   },
 
@@ -53,16 +72,16 @@ export default {
       getPostindexData: "postindexModule/getPostindexData",
       getStreetData: "streetModule/getStreetData",
       createAddress: "addressModule/createAddress",
-      updateAddress: "addressModule/updateAddress"
+      editeAddress: "addressModule/editeAddress"
     }),
 
-    saveData(object) {
-      if (object.cityId && object.streetId && object.postindexId) {
-        if (object.id) {
-          this.updateAddress(object);
+    saveData() {
+      if (this.currentObject.cityId && this.currentObject.streetId && this.currentObject.postindexId) {
+        if (this.currentObject.id) {
+          this.editeAddress(this.currentObject);
         }
         else {
-          this.createAddress(object);
+          this.createAddress(this.currentObject);
         }
 
         this.$emit("close");

@@ -29,7 +29,7 @@ class AddressClient {
     alert(response.data);
   }
 
-  async updateAddress(addressObject) {
+  async editeAddress(addressObject) {
     const response = await axios.put(`${API_URL}/address`, {
       id: addressObject.id,
       cityId: addressObject.cityId,

@@ -16,12 +16,18 @@
               {{ column.label }}
             </span>
             <div class="table-head-icon">
-              <div v-if="column.sort === 'Desc'">
-                <Icon icon="mdi:sort-descending" />
-              </div>
-              <div v-if="column.sort === 'Asc'">
-                <Icon icon="mdi:sort-ascending" />
-              </div>
+              <Icon
+                v-if="column.sort === 'Desc'"
+                iconstyle="solid"
+                icon="arrow-up-short-wide"
+                animation="fade"
+              />
+              <Icon
+                v-if="column.sort === 'Asc'"
+                iconstyle="solid"
+                icon="arrow-down-short-wide"
+                animation="fade"
+              />
             </div>
           </div>
           <div
@@ -44,12 +50,21 @@
           :key="secondIndex"
           :align="column.align"
         >
-          <slot
-            :name="column.property"
-            :element="element"
-          >
+          <div v-if="column.property==='actions'">
+            <CustomButton @click="$emit('editElement', element)">
+              <Icon icon="pen-to-square" />
+            </CustomButton>
+
+            <slot :index="index" />
+
+            <CustomButton @click="$emit('deleteElement', element.id)">
+              <Icon icon="trash" />
+            </CustomButton>
+          </div>
+
+          <div v-else>
             {{ getProperty(element, column.property) }}
-          </slot>
+          </div>
         </td>
       </tr>
     </tbody>

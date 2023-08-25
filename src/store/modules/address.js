@@ -49,8 +49,8 @@ export default {
       commit("updateAddressData", addresses);
     },
 
-    async updateAddress({ commit, state }, address) {
-      await addressClient.updateAddress(address);
+    async editeAddress({ commit, state }, address) {
+      await addressClient.editeAddress(address);
 
       const addresses = await addressClient.getAddresses(state.keywordSearch);
       commit("updateAddressData", addresses);
