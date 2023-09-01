@@ -4,39 +4,49 @@
     @close="$emit('close')"
     @saveData="saveCurriculumData"
   >
-    <div
-      v-for="(row, index) of rows"
-      :key="`content-row-${index}`"
-      class="block-group"
-    >
-      <label class="form-label">{{ row.label }}</label>
+    <ContentRow custom-key="faculty">
+      <CustomLabel>Факультет</CustomLabel>
+      <CustomSelect
+        :value="getValue('faculty', true)"
+        :options="faculties"
+        property="faculty"
+        :is-id="true"
+        @input="event => setValue(event, 'facultyId')"
+      />
+    </ContentRow>
 
-      <select
-        v-if="row.formType === 'select'"
-        v-model="currentObject[row.property]"
-        class="form-select"
-      >
-        <option
-          v-for="(element, secondIndex) of dropdown(row.property)"
-          :key="`drop-down-list-${secondIndex}`"
-          :value="element.id"
-        >
-          {{ element[row.property] }}
-        </option>
-      </select>
-      <input
-        v-else
-        v-model="currentObject[row.property]"
-        type="text"
-        class="form-control"
-      >
-    </div>
+    <ContentRow custom-key="speciality">
+      <CustomLabel>Специальность</CustomLabel>
+      <CustomSelect
+        :value="getValue('speciality', true)"
+        :options="specialities"
+        property="speciality"
+        :is-id="true"
+        @input="event => setValue(event, 'specialityId')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="course">
+      <CustomLabel>Курс</CustomLabel>
+      <CustomSelect
+        :value="getValue('course')"
+        :options="getMapedCourses()"
+        @input="event => setValue(event, 'course')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="group">
+      <CustomLabel>Группа</CustomLabel>
+      <CustomInput
+        :value="getValue('group')"
+        @input="event => setValue(event, 'group')"
+      />
+    </ContentRow>
   </Modal>
 </template>
 
 <script>
 import _ from "lodash";
-
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -49,14 +59,7 @@ export default {
 
   data() {
     return {
-      currentObject: null,
-      dropdownList: {},
-      rows: [
-        { label: "Факультет", property: "faculty", formType: "select" },
-        { label: "Специальность", property: "speciality", formType: "select" },
-        { label: "Курс", property: "course", formType: "select" },
-        { label: "Группа", property: "group", formType: "input" }
-      ]
+      object: null
     };
   },
 
@@ -68,40 +71,67 @@ export default {
     })
   },
 
-  created() {
-    this.currentObject = _.cloneDeep(this.curriculumObject);
+  watch: {
+    curriculumObject: {
+      immediate: true,
+      handler(value) {
+        this.object = _.cloneDeep(value);
+      }
+    },
+
+    faculties: {
+      immediate: true,
+      handler(collection) {
+        _.forEach(collection, object=> {
+          delete object.curriculums;
+        });
+      }
+    },
+
+    specialities: {
+      immediate: true,
+      handler(collection) {
+        _.forEach(collection, object=> {
+          delete object.curriculums;
+        });
+      }
+    }
   },
 
   async mounted() {
-    await this.getFacultyData();
-    await this.getSpecialityData();
-    await this.getCourseData();
+    await this.facultyData();
+    await this.specialityData();
+    await this.courseData();
   },
 
   methods: {
     ...mapActions({
-      getFacultyData: "facultyModule/getFacultyData",
-      getSpecialityData: "specialityModule/getSpecialityData",
-      getCourseData: "courseModule/getCourseData",
+      facultyData: "facultyModule/getFacultyData",
+      specialityData: "specialityModule/getSpecialityData",
+      courseData: "courseModule/getCourseData",
       createCurriculum: "curriculumModule/createCurriculum",
       updateCurriculum: "curriculumModule/updateCurriculum"
     }),
 
-    dropdown(property) {
-      this.dropdownList.faculty = this.faculties;
-      this.dropdownList.speciality = this.specialities;
-      this.dropdownList.course = this.courses;
+    getMapedCourses() {
+      return _.map(this.courses, "course");
+    },
 
-      return _.get(this.dropdownList, property);
+    getValue(property, isId = false) {
+      return isId ? _.get(this.object, `${property}.${property}`) : _.get(this.object, property);
+    },
+
+    setValue(event, property) {
+      _.set(this.object, property, event.target.value);
     },
 
     saveCurriculumData() {
-      if (this.currentObject.facultyId) {
-        if (this.currentObject.id) {
-          this.updateCurriculum(this.currentObject);
+      if (this.object.facultyId && this.object.specialityId && this.object.course && this.object.group) {
+        if (this.object.id) {
+          this.updateCurriculum(this.object);
         }
         else {
-          this.createCurriculum(this.currentObject);
+          this.createCurriculum(this.object);
         }
 
         this.$emit("close");

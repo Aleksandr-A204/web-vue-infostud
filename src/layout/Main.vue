@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main-layout">
     <header class="header">
       Добро пожаловать!
     </header>

@@ -32,5 +32,6 @@ export default {
   margin-right: 15px;
   max-width: 300px;
   width: 100%;
+  margin-bottom: 5px;
 }
 </style>

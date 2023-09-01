@@ -1,46 +1,97 @@
 <template>
   <Modal
-    :title="studentObject?.id ? 'Редактирование студента' : 'Создание студента'"
-    :rows="rows"
-    :object="studentObject"
-    :dropdown="{city: cities, street: streets, postindex: postindexes, faculty: faculties, speciality: specialities, course: courses, group: groups}"
+    :title="object?.id ? 'Редактирование студента' : 'Создание студента'"
     @close="$emit('close')"
     @saveData="saveSudentData"
   >
-    <!-- <div
-      v-for="(row, index) of rows"
-      :key="`content-row-${index}`"
-      class="block-group"
-    >
-      <label class="form-label">{{ row.label }}</label>
+    <ContentRow custom-key="fullName">
+      <CustomLabel>ФИО</CustomLabel>
+      <CustomInput
+        :value="getValue('fullName')"
+        @input="event => setValue(event, 'fullName')"
+      />
+    </ContentRow>
 
-      <div v-if="row.formType === 'select'">
-        <select
-          :value="getValue(row.property)"
-          class="form-select"
-          @input="event => setProperty(row.property, event)"
-        >
-          <option
-            selected
-            hidden
-          />
-          <option
-            v-for="(element, secondIndex) of dropdown(row.property)"
-            :key="`drop-down-list-${secondIndex}`"
-          >
-            {{ element[row.property] }}
-          </option>
-        </select>
-      </div>
-      <div v-else>
-        <input
-          :value="getValue(row.property)"
-          type="text"
-          class="form-control"
-          @input="event => setProperty(row.property, event)"
-        >
-      </div>
-    </div> -->
+    <ContentRow custom-key="city">
+      <CustomLabel>Город</CustomLabel>
+      <CustomSelect
+        :value="getValue('city', true)"
+        :options="cities"
+        property="city"
+        :is-id="true"
+        @input="event => setValue(event, 'cityId')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="street">
+      <CustomLabel>Улица</CustomLabel>
+      <CustomSelect
+        :value="getValue('street')"
+        :options="streets"
+        @input="event => setValue(event, 'street')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="postindex">
+      <CustomLabel>Почтовый индекс</CustomLabel>
+      <CustomSelect
+        :value="getValue('postindex')"
+        :options="postindexes"
+        @input="event => setValue(event, 'postindex')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="faculty">
+      <CustomLabel>Факультет</CustomLabel>
+      <CustomSelect
+        :value="getValue('faculty')"
+        :options="faculties"
+        @input="event => setValue(event, 'faculty')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="speciality">
+      <CustomLabel>Специальность</CustomLabel>
+      <CustomSelect
+        :value="getValue('speciality')"
+        :options="specialities"
+        @input="event => setValue(event, 'speciality')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="course">
+      <CustomLabel>Курс</CustomLabel>
+      <CustomSelect
+        :value="getValue('course')"
+        :options="courses"
+        @input="event => setValue(event, 'course')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="group">
+      <CustomLabel>Группа</CustomLabel>
+      <CustomSelect
+        :value="getValue('group')"
+        :options="groups"
+        @input="event => setValue(event, 'group')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="phone">
+      <CustomLabel>Номер телефона</CustomLabel>
+      <CustomInput
+        :value="getValue('phone')"
+        @input="event => setValue(event, 'phone')"
+      />
+    </ContentRow>
+
+    <ContentRow custom-key="email">
+      <CustomLabel>Электронная почта</CustomLabel>
+      <CustomInput
+        :value="getValue('email')"
+        @input="event => setValue(event, 'email')"
+      />
+    </ContentRow>
   </Modal>
 </template>
 
@@ -50,11 +101,6 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
   props: {
-    rows: {
-      type: Array,
-      required: true
-    },
-
     studentObject: {
       type: Object,
       required: true
@@ -63,6 +109,7 @@ export default {
 
   data() {
     return {
+      object: null
     };
   },
 
@@ -77,33 +124,52 @@ export default {
     },
 
     streets() {
-      return this.studentObject.city ? _.uniqBy(_.map(_.filter(this.addresses, { city: { city: this.studentObject.city } }), "street"), "street") :
-        _.uniqBy(_.map(this.addresses, "street"), "street");
+      return this.object.cityId ? _.map(_.uniqBy(_.map(_.filter(this.addresses, { cityId: Number(this.object.cityId) }), "street"), "street"), "street") :
+        _.map(_.uniqBy(_.map(this.addresses, "street"), "street"), "street");
     },
 
     postindexes() {
-      return this.studentObject.street ? _.uniqBy(_.map(_.filter(this.addresses, { city: { city: this.studentObject.city },
-        street: { street: this.studentObject.street } }), "postindex"), "postindex") : _.uniqBy(_.map(this.addresses, "postindex"), "postindex");
+      return this.object.street ? _.map(_.uniqBy(_.map(_.filter(this.addresses, { cityId: Number(this.object.cityId), street: { street: this.object.street } }), "postindex"),
+        "postindex"), "postindex") : _.map(_.uniqBy(_.map(this.addresses, "postindex"), "postindex"), "postindex");
     },
 
     faculties() {
-      return _.uniqBy(_.map(this.curriculums, "faculty"), "faculty");
+      return _.map(_.uniqBy(_.map(this.curriculums, "faculty"), "faculty"), "faculty");
     },
 
     specialities() {
-      return this.studentObject.faculty ? _.uniqBy(_.map(_.filter(this.curriculums, { faculty: { faculty: this.studentObject.faculty } }), "speciality"), "speciality") :
-        _.uniqBy(_.map(this.curriculums, "speciality"), "speciality");
+      return this.object.faculty ? _.map(_.uniqBy(_.map(_.filter(this.curriculums, { faculty: { faculty: this.object.faculty } }), "speciality"), "speciality"),
+        "speciality") : _.map(_.uniqBy(_.map(this.curriculums, "speciality"), "speciality"), "speciality");
     },
 
     courses() {
-      return this.studentObject.speciality ? _.uniqBy(_.filter(this.curriculums, { faculty: { faculty: this.studentObject.faculty },
-        speciality: { speciality: this.studentObject.speciality } }), "course") : _.sortBy(_.uniqBy(this.curriculums, "course"), "course");
+      return this.object.speciality ? _.map(_.sortBy(_.uniqBy(_.filter(this.curriculums, { faculty: { faculty: this.object.faculty },
+        speciality: { speciality: this.object.speciality } }), "course"), "course"), "course") : _.map(_.sortBy(_.uniqBy(this.curriculums, "course"), "course"), "course");
     },
 
     groups() {
-      return this.studentObject.course ? _.uniqBy(_.filter(this.curriculums, { faculty: { faculty: this.studentObject.faculty },
-        speciality: { speciality: this.studentObject.speciality }, course: this.studentObject.course }), "group") :
-        _.uniqBy(this.curriculums, "group");
+      return this.object.course ? _.map(_.uniqBy(_.filter(this.curriculums, { faculty: { faculty: this.object.faculty },
+        speciality: { speciality: this.object.speciality }, course: this.object.course }), "group"), "group") :
+        _.map(_.uniqBy(this.curriculums, "group"), "group");
+    }
+  },
+
+  watch: {
+    studentObject: {
+      immediate: true,
+      handler(value) {
+        this.object = _.cloneDeep(value);
+      }
+    },
+
+    cities: {
+      immediate: true,
+      handler(collection) {
+        _.forEach(collection, object => {
+          delete object.students;
+          delete object.addresses;
+        });
+      }
     }
   },
 
@@ -114,21 +180,53 @@ export default {
 
   methods: {
     ...mapActions({
-      getAddressData: "addressModule/getAddressData",
-      getCurriculumData: "curriculumModule/curriculumData",
       createStudent: "studentModule/addNewStudent",
       editStudent: "studentModule/editStudent"
     }),
 
-    saveSudentData(object) {
-      if (object.fullName && object.city && object.street && object.postindex
-       && object.faculty && object.speciality && object.course && object.group
-        && object.phone && object.email) {
-        if (object.id) {
-          this.editStudent(object);
+    updateObject(property) {
+      switch (property) {
+      case "cityId":
+        this.object.street = null;
+        this.object.postindex = null;
+        break;
+      case "street":
+        this.object.postindex = null;
+        break;
+      case "faculty":
+        this.object.speciality = null;
+        this.object.course = null;
+        this.object.group = null;
+        break;
+      case "speciality":
+        this.object.course = null;
+        this.object.group = null;
+        break;
+      case "course":
+        this.object.group = null;
+        break;
+      }
+    },
+
+    getValue(property, isId = false) {
+      return isId ? _.get(this.object, `${property}.${property}`) : _.get(this.object, property);
+    },
+
+    setValue(event, property) {
+      _.set(this.object, property, event.target.value);
+
+      this.updateObject(property);
+    },
+
+    saveSudentData() {
+      console.log(this.object);
+      if (this.object.fullName && this.object.cityId && this.object.street && this.object.postindex && this.object.faculty && this.object.speciality
+      && this.object.course && this.object.group && this.object.phone && this.object.email) {
+        if (this.object.id) {
+          this.editStudent(this.object);
         }
         else {
-          this.createStudent(object);
+          this.createStudent(this.object);
         }
         this.$emit("close");
       }

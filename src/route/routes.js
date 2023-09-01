@@ -14,29 +14,29 @@ const routes = [
       {
         path: "students",
         name: "main.students",
-        component: () => import("../view/Student.vue"),
+        component: () => import("../components/Student.vue"),
         children: [
           {
             path: "pages/:id",
             name: "main.students.pages",
-            component: () => import("../view/Page.vue")
+            component: () => import("../components/Page.vue")
           }
         ]
       },
       {
         path: "addresses",
         name: "addresses",
-        component: () => import("../view/Address.vue")
+        component: () => import("../components/Address.vue")
       },
       {
         path: "curriculums",
         name: "curriculums",
-        component: () => import("../view/Curriculum.vue")
+        component: () => import("../components/Curriculum.vue")
       },
       {
         path: "contacts",
         name: "contacts",
-        component: () => import("../view/Contact.vue")
+        component: () => import("../components/Contact.vue")
       }
     ]
   },

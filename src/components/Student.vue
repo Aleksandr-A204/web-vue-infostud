@@ -14,10 +14,12 @@
         :columns="columns"
         :elements="students"
         @columnClick="columnClick"
-        @editElement="editStudent"
-        @deleteElement="confirmDeleteStudent"
       >
-        <template #default="{index}">
+        <template #actions="{index, element}">
+          <CustomButton @click="editStudent(element)">
+            <Icon icon="pen-to-square" />
+          </CustomButton>
+
           <RouterLink
             :key="`page-${index}`"
             :to="{name: 'main.students.pages', params: {id: index + 1}}"
@@ -26,12 +28,15 @@
               <Icon icon="file-lines" />
             </CustomButton>
           </RouterLink>
+
+          <CustomButton @click="confirmDeleteStudent(element.id)">
+            <Icon icon="trash" />
+          </CustomButton>
         </template>
       </CustomTable>
 
       <StudentModal
         v-if="showModal"
-        :rows="columns.toSpliced(-1)"
         :student-object="studentObject"
         @close="showModal = false"
       />
@@ -45,8 +50,6 @@
 import StudentModal from "../modal/StudentModal.vue";
 import { mapActions, mapGetters } from "vuex";
 
-import _ from "lodash";
-
 export default {
   components: {
     StudentModal
@@ -59,62 +62,52 @@ export default {
         {
           label: "ФИО",
           property: "fullName",
-          sort: "None",
-          formType: "input"
+          sort: "None"
         },
         {
           label: "Город",
-          property: "city",
-          sort: "None",
-          formType: "select"
+          property: "city.city",
+          sort: "None"
         },
         {
           label: "Улица",
           property: "street",
-          sort: "None",
-          formType: "select"
+          sort: "None"
         },
         {
           label: "Почтовый индекс",
           property: "postindex",
-          sort: "None",
-          formType: "select"
+          sort: "None"
         },
         {
           label: "Факультет",
           property: "faculty",
-          sort: "None",
-          formType: "select"
+          sort: "None"
         },
         {
           label: "Специальность",
           property: "speciality",
-          sort: "None",
-          formType: "select"
+          sort: "None"
         },
         {
           label: "Курс",
           property: "course",
-          sort: "None",
-          formType: "select"
+          sort: "None"
         },
         {
           label: "Группа",
           property: "group",
-          sort: "None",
-          formType: "select"
+          sort: "None"
         },
         {
           label: "Телефон",
           property: "phone",
-          sort: "None",
-          formType: "input"
+          sort: "None"
         },
         {
           label: "Электронная почта",
           property: "email",
-          sort: "None",
-          formType: "input"
+          sort: "None"
         },
         {
           label: "Действия",
@@ -142,7 +135,18 @@ export default {
     }),
 
     addStudent() {
-      this.studentObject = { };
+      this.studentObject = {
+        fullName: null,
+        cityId: null,
+        street: null,
+        postindex: null,
+        faculty: null,
+        speciality: null,
+        course: null,
+        group: null,
+        phone: null,
+        email: null
+      };
 
       this.showModal = true;
     },
@@ -176,7 +180,7 @@ export default {
     },
 
     editStudent(selectedStudent) {
-      this.studentObject = _.cloneDeep(selectedStudent);
+      this.studentObject = selectedStudent;
 
       this.showModal = true;
     },

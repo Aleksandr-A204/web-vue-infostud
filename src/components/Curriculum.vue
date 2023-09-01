@@ -13,9 +13,17 @@
       :columns="columns"
       :elements="curriculums"
       @columnClick="columnClick"
-      @editElement="editCurriculum"
-      @deleteElement="confirmDeleteCurriculum"
-    />
+    >
+      <template #actions="{element}">
+        <CustomButton @click="editCurriculum(element)">
+          <Icon icon="pen-to-square" />
+        </CustomButton>
+
+        <CustomButton @click="confirmDeleteCurriculum(element.id)">
+          <Icon icon="trash" />
+        </CustomButton>
+      </template>
+    </CustomTable>
 
     <CurriculumModal
       v-if="showModal"
@@ -26,6 +34,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 import { mapActions, mapGetters } from "vuex";
 
 import CurriculumModal from "../modal/CurriculumModal.vue";
@@ -38,23 +47,26 @@ export default {
   data() {
     return {
       showModal: false,
-      selectedCurriculum: {},
       columns: [
         {
           label: "Факультет",
-          property: "faculty.faculty"
+          property: "faculty.faculty",
+          sort: "None"
         },
         {
           label: "Специальность",
-          property: "speciality.speciality"
+          property: "speciality.speciality",
+          sort: "None"
         },
         {
           label: "Курс",
-          property: "course"
+          property: "course",
+          sort: "None"
         },
         {
           label: "Группа",
-          property: "group"
+          property: "group",
+          sort: "None"
         },
         {
           label: "Действия",
@@ -91,7 +103,7 @@ export default {
     },
 
     editCurriculum(curriculum) {
-      this.selectedCurriculum = curriculum;
+      this.selectedCurriculum = _.cloneDeep(curriculum);
 
       this.showModal = true;
     },

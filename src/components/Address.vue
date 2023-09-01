@@ -13,13 +13,20 @@
       :columns="columns"
       :elements="addresses"
       @columnClick="columnClick"
-      @editElement="editAddress"
-      @deleteElement="confirmDeleteAddress"
-    />
+    >
+      <template #actions="{element}">
+        <CustomButton @click="editAddress(element)">
+          <Icon icon="pen-to-square" />
+        </CustomButton>
+
+        <CustomButton @click="confirmDeleteAddress(element.id)">
+          <Icon icon="trash" />
+        </CustomButton>
+      </template>
+    </CustomTable>
 
     <AddressModal
       v-if="showModal"
-      :rows="columns.toSpliced(-1)"
       :address-object="selectedAddress"
       @close="showModal = false"
     />
@@ -29,8 +36,6 @@
 <script>
 import AddressModal from "../modal/AddressModal.vue";
 import { mapActions, mapGetters } from "vuex";
-
-import _ from "lodash";
 
 export default {
   components: {
@@ -44,20 +49,20 @@ export default {
         {
           label: "Город",
           property: "city.city",
-          sort: "None",
-          formType: "select"
+          propertyById: "cityId",
+          sort: "None"
         },
         {
           label: "Почтовый индекс",
           property: "postindex.postindex",
-          sort: "None",
-          formType: "select"
+          propertyById: "postindexId",
+          sort: "None"
         },
         {
           label: "Улица",
           property: "street.street",
-          sort: "None",
-          formType: "select"
+          propertyById: "streetId",
+          sort: "None"
         },
         {
           label: "Действия",
@@ -79,11 +84,15 @@ export default {
   methods: {
     ...mapActions({
       deleteAddress: "addressModule/deleteAddress",
-      getAddressData: "addressModule/getAddressData"
+      getAddressData: "addressModule/addressData"
     }),
 
     addAddress() {
-      this.selectedAddress = { };
+      this.selectedAddress = {
+        city: null,
+        street: null,
+        postindex: null
+      };
 
       this.showModal = true;
     },
@@ -117,7 +126,7 @@ export default {
     },
 
     editAddress(address) {
-      this.selectedAddress = _.cloneDeep(address);
+      this.selectedAddress = address;
 
       this.showModal = true;
     },

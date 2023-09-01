@@ -22,7 +22,7 @@ export default {
   },
 
   actions: {
-    async getAddressData({ commit, state }, column) {
+    async addressData({ commit, state }, column) {
       const addresses = await addressClient.getAddresses(state.keywordSearch, column);
 
       commit("updateAddressData", addresses);

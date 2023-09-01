@@ -50,21 +50,13 @@
           :key="secondIndex"
           :align="column.align"
         >
-          <div v-if="column.property==='actions'">
-            <CustomButton @click="$emit('editElement', element)">
-              <Icon icon="pen-to-square" />
-            </CustomButton>
-
-            <slot :index="index" />
-
-            <CustomButton @click="$emit('deleteElement', element.id)">
-              <Icon icon="trash" />
-            </CustomButton>
-          </div>
-
-          <div v-else>
+          <slot
+            :name="column.property"
+            :index="index"
+            :element="element"
+          >
             {{ getProperty(element, column.property) }}
-          </div>
+          </slot>
         </td>
       </tr>
     </tbody>

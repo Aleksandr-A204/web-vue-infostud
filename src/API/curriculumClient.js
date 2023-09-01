@@ -3,15 +3,13 @@ import axios from "axios";
 const API_URL = "http://localhost:5053/api";
 
 class CurriculumClient {
-  async createCurriculum(curriculumObject) {
-    const responce = await axios.post(`${API_URL}/curriculum`, {
-      courseId: curriculumObject.courseId,
-      facultyId: curriculumObject.facultyId,
-      groupId: curriculumObject.groupId,
-      specialityId: curriculumObject.specialityId
-    });
-
-    alert(responce.data);
+  async createCurriculum(newCurriculum) {
+    try {
+      await axios.post(`${API_URL}/curriculum`, newCurriculum);
+    }
+    catch (axiosError) {
+      alert(axiosError.response.data);
+    }
   }
 
   async deleteCurriculum(curriculumId) {
@@ -30,16 +28,13 @@ class CurriculumClient {
     return responce.data;
   }
 
-  async updateCurriculum(curriculumObject) {
-    const responce = await axios.put(`${API_URL}/curriculum`, {
-      id: curriculumObject.id,
-      courseId: curriculumObject.courseId,
-      facultyId: curriculumObject.facultyId,
-      groupId: curriculumObject.groupId,
-      specialityId: curriculumObject.specialityId
-    });
-
-    alert(responce.data);
+  async updateCurriculum(oldCurriculum) {
+    try {
+      await axios.put(`${API_URL}/curriculum`, oldCurriculum);
+    }
+    catch (axiosError) {
+      alert(axiosError.response.data);
+    }
   }
 }
 

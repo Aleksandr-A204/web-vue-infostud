@@ -3,14 +3,13 @@ import axios from "axios";
 const API_URL = "http://localhost:5053/api";
 
 class AddressClient {
-  async createAddress(addressObject) {
-    const response = await axios.post(`${API_URL}/address`, {
-      cityId: addressObject.cityId,
-      postindexId: addressObject.postindexId,
-      streetId: addressObject.streetId
-    });
-
-    alert(response.data);
+  async createAddress(newAddress) {
+    try {
+      await axios.post(`${API_URL}/address`, newAddress);
+    }
+    catch (axiosError) {
+      alert(axiosError.response.data);
+    }
   }
 
   async getAddresses(keywordSearch = "") {
@@ -29,15 +28,13 @@ class AddressClient {
     alert(response.data);
   }
 
-  async editeAddress(addressObject) {
-    const response = await axios.put(`${API_URL}/address`, {
-      id: addressObject.id,
-      cityId: addressObject.cityId,
-      postindexId: addressObject.postindexId,
-      streetId: addressObject.streetId
-    });
-
-    alert(response.data);
+  async editeAddress(oldAddress) {
+    try {
+      await axios.put(`${API_URL}/address`, oldAddress);
+    }
+    catch (axiosError) {
+      alert(axiosError.response.data);
+    }
   }
 }
 

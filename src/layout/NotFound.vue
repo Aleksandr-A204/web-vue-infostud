@@ -1,5 +1,7 @@
 <template>
-  <h2>Страница не найдена.</h2>
+  <div class="error-layout">
+    <h2>Страница не найдена.</h2>
+  </div>
 </template>
 
 <script>

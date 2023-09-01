@@ -4,18 +4,12 @@ const API_URL = "http://localhost:5053/api";
 
 class StudentClient {
   async addNewStudent(newStudent) {
-    await axios.post(`${API_URL}/student`, {
-      city: newStudent.city,
-      postindex: newStudent.postindex,
-      street: newStudent.street,
-      course: newStudent.course,
-      faculty: newStudent.faculty,
-      group: newStudent.group,
-      speciality: newStudent.speciality,
-      email: newStudent.email,
-      phone: newStudent.phone,
-      fullName: newStudent.fullName
-    });
+    try {
+      await axios.post(`${API_URL}/student`, newStudent);
+    }
+    catch (axiosError) {
+      alert(axiosError.response.data);
+    }
   }
 
   async getStudents(keywordSearch = "", column) {
@@ -37,19 +31,12 @@ class StudentClient {
   }
 
   async editStudent(editedStudent) {
-    await axios.put(`${API_URL}/student`, {
-      city: editedStudent.city,
-      postindex: editedStudent.postindex,
-      street: editedStudent.street,
-      course: editedStudent.course,
-      faculty: editedStudent.faculty,
-      group: editedStudent.group,
-      speciality: editedStudent.speciality,
-      email: editedStudent.email,
-      phone: editedStudent.phone,
-      fullName: editedStudent.fullName,
-      id: editedStudent.id
-    });
+    try {
+      await axios.put(`${API_URL}/student`, editedStudent);
+    }
+    catch (axiosError) {
+      alert(axiosError.response.data);
+    }
   }
 }
 
