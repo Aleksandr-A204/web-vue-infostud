@@ -2,6 +2,7 @@
   <div
     :key="customKey"
     class="block-group"
+    :class="{disabled: disabled}"
   >
     <slot />
   </div>
@@ -13,6 +14,11 @@ export default {
     customKey: {
       type: String,
       default: null
+    },
+
+    disabled: {
+      type: Boolean,
+      default: false
     }
   }
 };
@@ -26,4 +32,8 @@ export default {
   margin-bottom: 7px;
   font-size: 14px;
 }
+.disabled{
+    pointer-events: none;
+    opacity: 0.4;
+  }
 </style>

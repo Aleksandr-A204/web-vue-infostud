@@ -23,7 +23,10 @@
       />
     </ContentRow>
 
-    <ContentRow custom-key="street">
+    <ContentRow
+      custom-key="street"
+      :disabled="!object.cityId"
+    >
       <CustomLabel>Улица</CustomLabel>
       <CustomSelect
         :value="getValue('street')"
@@ -32,7 +35,10 @@
       />
     </ContentRow>
 
-    <ContentRow custom-key="postindex">
+    <ContentRow
+      custom-key="postindex"
+      :disabled="!object.street"
+    >
       <CustomLabel>Почтовый индекс</CustomLabel>
       <CustomSelect
         :value="getValue('postindex')"
@@ -50,7 +56,10 @@
       />
     </ContentRow>
 
-    <ContentRow custom-key="speciality">
+    <ContentRow
+      custom-key="speciality"
+      :disabled="!object.faculty"
+    >
       <CustomLabel>Специальность</CustomLabel>
       <CustomSelect
         :value="getValue('speciality')"
@@ -59,7 +68,10 @@
       />
     </ContentRow>
 
-    <ContentRow custom-key="course">
+    <ContentRow
+      custom-key="course"
+      :disabled="!object.speciality"
+    >
       <CustomLabel>Курс</CustomLabel>
       <CustomSelect
         :value="getValue('course')"
@@ -68,7 +80,10 @@
       />
     </ContentRow>
 
-    <ContentRow custom-key="group">
+    <ContentRow
+      custom-key="group"
+      :disabled="!object.course"
+    >
       <CustomLabel>Группа</CustomLabel>
       <CustomSelect
         :value="getValue('group')"
@@ -219,7 +234,6 @@ export default {
     },
 
     saveSudentData() {
-      console.log(this.object);
       if (this.object.fullName && this.object.cityId && this.object.street && this.object.postindex && this.object.faculty && this.object.speciality
       && this.object.course && this.object.group && this.object.phone && this.object.email) {
         if (this.object.id) {
