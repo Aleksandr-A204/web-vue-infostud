@@ -1,5 +1,7 @@
 import CityClient from "@/API/cityClient.js";
 
+import _ from "lodash";
+
 const cityClient = new CityClient();
 
 export default {
@@ -27,6 +29,13 @@ export default {
   getters: {
     cities(state) {
       return state.cities;
+    },
+
+    mapedCities(state) {
+      return _.map(state.cities, city => ({
+        display: city.city,
+        value: city.id
+      }));
     }
   }
 };

@@ -1,22 +1,20 @@
 <template>
   <select
     class="select"
-    :value="value"
-    @input="event => $emit('input', event)"
+    @input="event => $emit('input', event.target.value)"
   >
     <option
       selected
       hidden
     >
-      {{ value }}
+      {{ customLabel }}
     </option>
     <option
       v-for="(option, index) of options"
       :key="index"
-      class="option"
-      :value="isId ? option.id : option"
+      :value="trackBy ? option[trackBy] : option"
     >
-      {{ isId ? getValue(option) : option }}
+      {{ label ? option[label] : option }}
     </option>
   </select>
 </template>
@@ -31,25 +29,35 @@ export default {
       required: true
     },
 
-    isId: {
-      type: Boolean,
-      default: false
-    },
-
-    value: {
+    label: {
       type: String,
       default: null
     },
 
-    property: {
+    trackBy: {
       type: String,
+      default: null
+    },
+
+    value: {
+      type: [String, Object, Number],
       default: null
     }
   },
 
-  methods: {
-    getValue(option) {
-      return _.get(option, this.property);
+  computed: {
+    selected() {
+      if (this.trackBy) {
+        return _.find(this.options, { value: Number(this.value) });
+      }
+      return this.value;
+    },
+
+    customLabel() {
+      if (this.trackBy) {
+        return _.get(this.selected, this.label);
+      }
+      return this.value;
     }
   }
 };

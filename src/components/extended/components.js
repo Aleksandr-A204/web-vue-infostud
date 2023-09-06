@@ -1,20 +1,17 @@
-import Icon from "@/components/Icon.vue";
-
-import ContentRow from "@/components/ContentRow.vue";
-import CustomButton from "@/components/Button.vue";
-import CustomInput from "@/components/CustomInput.vue";
-import CustomLabel from "@/components/CustomLabel.vue";
-import CustomSelect from "@/components/CustomSelect.vue";
-import CustomTable from "../Table.vue";
-import Search from "../Search.vue";
+import CustomButton from "./Button.vue";
+import CustomInput from "./Input.vue";
+import CustomSelect from "./Select.vue";
+import CustomTable from "./Table.vue";
+import Icon from "./Icon.vue";
+import RowWithLabel from "./RowWithLabel.vue";
+import Search from "./Search.vue";
 
 import Modal from "@/modal/Modal.vue";
 
 const Components = {
-  ContentRow,
+  RowWithLabel,
   CustomButton,
   CustomInput,
-  CustomLabel,
   CustomSelect,
   CustomTable,
   Icon,

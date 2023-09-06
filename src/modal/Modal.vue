@@ -1,7 +1,7 @@
 <template>
   <div class="outside-modal">
     <div
-      v-click-outside="close"
+      v-click-outside="() => $emit('close')"
       class="inside-modal"
     >
       <slot name="header">
@@ -41,12 +41,6 @@ export default {
     title: {
       type: String,
       required: true
-    }
-  },
-
-  methods: {
-    close() {
-      this.$emit("close");
     }
   }
 };

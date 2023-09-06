@@ -4,7 +4,9 @@
     :disabled="disabled"
     @click="$emit('click')"
   >
-    <slot />
+    <slot>
+      <Icon :icon="icon" />
+    </slot>
   </button>
 </template>
 
@@ -13,7 +15,12 @@ export default {
   props: {
     disabled: {
       type: Boolean,
-      dafault: false
+      default: false
+    },
+
+    icon: {
+      type: String,
+      default: null
     }
   }
 };

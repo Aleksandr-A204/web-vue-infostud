@@ -2,7 +2,7 @@
   <div>
     <Search
       :value="getKeywordSearch"
-      @input="setKeywordSearch"
+      @input="value => $store.dispatch('curriculumModule/keywordSearch', value)"
     />
 
     <CustomButton @click="addCurriculum()">
@@ -15,13 +15,15 @@
       @columnClick="columnClick"
     >
       <template #actions="{element}">
-        <CustomButton @click="editCurriculum(element)">
-          <Icon icon="pen-to-square" />
-        </CustomButton>
+        <CustomButton
+          icon="pen-to-square"
+          @click="editCurriculum(element)"
+        />
 
-        <CustomButton @click="confirmDeleteCurriculum(element.id)">
-          <Icon icon="trash" />
-        </CustomButton>
+        <CustomButton
+          icon="trash"
+          @click="confirmDeleteCurriculum(element.id)"
+        />
       </template>
     </CustomTable>
 
@@ -34,7 +36,6 @@
 </template>
 
 <script>
-import _ from "lodash";
 import { mapActions, mapGetters } from "vuex";
 
 import CurriculumModal from "../modal/CurriculumModal.vue";
@@ -103,7 +104,7 @@ export default {
     },
 
     editCurriculum(curriculum) {
-      this.selectedCurriculum = _.cloneDeep(curriculum);
+      this.selectedCurriculum = curriculum;
 
       this.showModal = true;
     },
@@ -134,10 +135,6 @@ export default {
       }
 
       await this.getCurriculumData(currentColumn);
-    },
-
-    setKeywordSearch(value) {
-      this.$store.dispatch("curriculumModule/keywordSearch", value);
     }
   }
 };

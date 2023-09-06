@@ -15,12 +15,12 @@
       <hr>
 
       <div class="information-page-content">
-        <div v-if="isExistStudent">
+        <div v-if="$route.params.id >= 1 && $route.params.id <= students.length">
           <div class="row">
             <label>Фамилия Имя Отечество:</label><span>{{ student?.fullName }}</span>
           </div>
           <div class="row">
-            <label>Город:</label><span>{{ student?.city }}</span>
+            <label>Город:</label><span>{{ student?.city.city }}</span>
           </div>
           <div class="row">
             <label>Улица:</label><span>{{ student?.street }}</span>
@@ -56,18 +56,16 @@
 
       <div class="information-page-footer">
         <CustomButton
+          icon="chevron-left"
           :disabled="$route.params.id <= 1"
           @click="previousPage()"
-        >
-          <Icon icon="chevron-left" />
-        </CustomButton>
+        />
         <span>{{ $route.params.id }} / {{ students.length }}</span>
         <CustomButton
+          icon="chevron-right"
           :disabled="$route.params.id >= students.length"
           @click="nextPage()"
-        >
-          <Icon icon="chevron-right" />
-        </CustomButton>
+        />
       </div>
     </div>
   </div>
@@ -83,10 +81,6 @@ export default {
 
     student() {
       return this.students[this.$route.params.id - 1];
-    },
-
-    isExistStudent() {
-      return this.$route.params.id >= 1 && this.$route.params.id <= this.students.length;
     }
   },
 
@@ -97,8 +91,7 @@ export default {
     },
 
     nextPage() {
-      this.$route.params.id <= 0 ? this.$router.push(`/students/pages/${1}`)
-        : this.$router.push(`/students/pages/${Number(this.$route.params.id) + 1}`);
+      this.$route.params.id <= 0 ? this.$router.push(`/students/pages/${1}`) : this.$router.push(`/students/pages/${Number(this.$route.params.id) + 1}`);
     }
   }
 };

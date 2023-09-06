@@ -12,10 +12,12 @@ class AddressClient {
     }
   }
 
-  async getAddresses(keywordSearch = "") {
+  async getAddresses(keywordSearch = "", column) {
     const response = await axios.get(`${API_URL}/address`, {
       params: {
-        keywordSearch: keywordSearch
+        keywordSearch: keywordSearch,
+        sortProperty: column?.property,
+        sortType: column?.sort
       }
     });
 

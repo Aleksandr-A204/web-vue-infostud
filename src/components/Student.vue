@@ -2,8 +2,8 @@
   <div>
     <div v-if="!$route.path.includes('pages')">
       <Search
-        :value="keywordSearch"
-        @input="setKeywordSearch"
+        :value="getKeywordSearch"
+        @input="value => $store.dispatch('studentModule/keywordSearch', value)"
       />
 
       <CustomButton @click="addStudent()">
@@ -16,22 +16,22 @@
         @columnClick="columnClick"
       >
         <template #actions="{index, element}">
-          <CustomButton @click="editStudent(element)">
-            <Icon icon="pen-to-square" />
-          </CustomButton>
+          <CustomButton
+            icon="pen-to-square"
+            @click="editStudent(element)"
+          />
 
           <RouterLink
             :key="`page-${index}`"
-            :to="{name: 'main.students.pages', params: {id: index + 1}}"
+            :to="{name: 'pages', params: {id: index + 1}}"
           >
-            <CustomButton>
-              <Icon icon="file-lines" />
-            </CustomButton>
+            <CustomButton icon="file-lines" />
           </RouterLink>
 
-          <CustomButton @click="confirmDeleteStudent(element.id)">
-            <Icon icon="trash" />
-          </CustomButton>
+          <CustomButton
+            icon="trash"
+            @click="confirmDeleteStudent(element.id)"
+          />
         </template>
       </CustomTable>
 
@@ -49,6 +49,8 @@
 <script>
 import StudentModal from "../modal/StudentModal.vue";
 import { mapActions, mapGetters } from "vuex";
+
+import _ from "lodash";
 
 export default {
   components: {
@@ -120,8 +122,20 @@ export default {
   computed: {
     ...mapGetters({
       students: "studentModule/students",
-      keywordSearch: "studentModule/keywordSearch"
+      getKeywordSearch: "studentModule/keywordSearch"
     })
+  },
+
+  watch: {
+    students: {
+      immediate: true,
+      handler(collection) {
+        _.forEach(collection, element => {
+          delete element.city.students;
+          delete element.city.addresses;
+        });
+      }
+    }
   },
 
   async mounted() {
@@ -183,10 +197,6 @@ export default {
       this.studentObject = selectedStudent;
 
       this.showModal = true;
-    },
-
-    setKeywordSearch(value) {
-      this.$store.dispatch("studentModule/keywordSearch", value);
     }
   }
 };

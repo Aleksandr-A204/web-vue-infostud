@@ -3,7 +3,7 @@
     :value="value"
     type="text"
     class="input"
-    @input="event => $emit('input', event)"
+    @input="event => $emit('input', event.target.value)"
   >
 </template>
 

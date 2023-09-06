@@ -12,11 +12,11 @@ export default {
   },
 
   mutations: {
-    updateCurriculumData(state, allCurriculums) {
+    setCurriculumData(state, allCurriculums) {
       state.curriculums = allCurriculums;
     },
 
-    updateKeywordSearch(state, keywordSearch) {
+    setKeywordSearch(state, keywordSearch) {
       state.keywordSearch = keywordSearch;
     }
   },
@@ -26,34 +26,34 @@ export default {
       await curriculumClient.createCurriculum(curriculum);
 
       const curriculums = await curriculumClient.getCurriculums(state.keywordSearch);
-      commit("updateCurriculumData", curriculums);
+      commit("setCurriculumData", curriculums);
     },
 
     async deleteCurriculum({ commit, state }, curriculumId) {
       await curriculumClient.deleteCurriculum(curriculumId);
 
       const curriculums = await curriculumClient.getCurriculums(state.keywordSearch);
-      commit("updateCurriculumData", curriculums);
+      commit("setCurriculumData", curriculums);
     },
 
     async curriculumData({ commit, state }, column) {
       const curriculums = await curriculumClient.getCurriculums(state.keywordSearch, column);
 
-      commit("updateCurriculumData", curriculums);
+      commit("setCurriculumData", curriculums);
     },
 
     async keywordSearch({ commit, state }, keywordSearch) {
-      commit("updateKeywordSearch", keywordSearch);
+      commit("setKeywordSearch", keywordSearch);
 
       const curriculums = await curriculumClient.getCurriculums(state.keywordSearch);
-      commit("updateCurriculumData", curriculums);
+      commit("setCurriculumData", curriculums);
     },
 
     async updateCurriculum({ commit, state }, curriculum) {
       await curriculumClient.updateCurriculum(curriculum);
 
       const curriculums = await curriculumClient.getCurriculums(state.keywordSearch);
-      commit("updateCurriculumData", curriculums);
+      commit("setCurriculumData", curriculums);
     }
   },
 

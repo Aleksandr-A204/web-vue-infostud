@@ -13,13 +13,13 @@ const routes = [
     children: [
       {
         path: "students",
-        name: "main.students",
+        name: "students",
         component: () => import("../components/Student.vue"),
         children: [
           {
             path: "pages/:id",
-            name: "main.students.pages",
-            component: () => import("../components/Page.vue")
+            name: "pages",
+            component: () => import("../view/Page.vue")
           }
         ]
       },

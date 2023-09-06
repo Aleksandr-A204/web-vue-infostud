@@ -12,11 +12,11 @@ export default {
   },
 
   mutations: {
-    updateAddressData(state, allAddresses) {
+    setAddressData(state, allAddresses) {
       state.addresses = allAddresses;
     },
 
-    updateKeywordSearch(state, keywordSearch) {
+    setKeywordSearch(state, keywordSearch) {
       state.keywordSearch = keywordSearch;
     }
   },
@@ -25,35 +25,35 @@ export default {
     async addressData({ commit, state }, column) {
       const addresses = await addressClient.getAddresses(state.keywordSearch, column);
 
-      commit("updateAddressData", addresses);
+      commit("setAddressData", addresses);
     },
 
     async createAddress({ commit, state }, address) {
       await addressClient.createAddress(address);
 
       const addresses = await addressClient.getAddresses(state.keywordSearch);
-      commit("updateAddressData", addresses);
+      commit("setAddressData", addresses);
     },
 
     async deleteAddress({ commit, state }, addressId) {
       await addressClient.deleteAddress(addressId);
 
       const addresses = await addressClient.getAddresses(state.keywordSearch);
-      commit("updateAddressData", addresses);
+      commit("setAddressData", addresses);
     },
 
     async keywordSearch({ commit }, keywordSearch) {
-      commit("updateKeywordSearch", keywordSearch);
+      commit("setKeywordSearch", keywordSearch);
 
       const addresses = await addressClient.getAddresses(keywordSearch);
-      commit("updateAddressData", addresses);
+      commit("setAddressData", addresses);
     },
 
     async editeAddress({ commit, state }, address) {
       await addressClient.editeAddress(address);
 
       const addresses = await addressClient.getAddresses(state.keywordSearch);
-      commit("updateAddressData", addresses);
+      commit("setAddressData", addresses);
     }
   },
 

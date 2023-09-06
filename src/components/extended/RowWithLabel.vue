@@ -1,9 +1,9 @@
 <template>
   <div
-    :key="customKey"
     class="block-group"
     :class="{disabled: disabled}"
   >
+    <label class="form-label">{{ label }}</label>
     <slot />
   </div>
 </template>
@@ -11,9 +11,9 @@
 <script>
 export default {
   props: {
-    customKey: {
+    label: {
       type: String,
-      default: null
+      required: true
     },
 
     disabled: {
@@ -24,16 +24,21 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .block-group {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 7px;
   font-size: 14px;
+
+  .form-label{
+    margin-right: 2px;
+  }
 }
 .disabled{
-    pointer-events: none;
-    opacity: 0.4;
-  }
+  pointer-events: none;
+  opacity: 0.4;
+}
+
 </style>

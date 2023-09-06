@@ -4,44 +4,40 @@
     @close="$emit('close')"
     @saveData="saveCurriculumData"
   >
-    <ContentRow custom-key="faculty">
-      <CustomLabel>Факультет</CustomLabel>
+    <RowWithLabel label="Факультет">
       <CustomSelect
-        :value="getValue('faculty', true)"
         :options="faculties"
-        property="faculty"
-        :is-id="true"
-        @input="event => setValue(event, 'facultyId')"
+        track-by="value"
+        label="display"
+        :value="object.facultyId"
+        @input="value => setValue(value, 'facultyId')"
       />
-    </ContentRow>
+    </RowWithLabel>
 
-    <ContentRow custom-key="speciality">
-      <CustomLabel>Специальность</CustomLabel>
+    <RowWithLabel label="Специальность">
       <CustomSelect
-        :value="getValue('speciality', true)"
         :options="specialities"
-        property="speciality"
-        :is-id="true"
-        @input="event => setValue(event, 'specialityId')"
+        track-by="value"
+        label="display"
+        :value="object.specialityId"
+        @input="value => setValue(value, 'specialityId')"
       />
-    </ContentRow>
+    </RowWithLabel>
 
-    <ContentRow custom-key="course">
-      <CustomLabel>Курс</CustomLabel>
+    <RowWithLabel label="Курс">
       <CustomSelect
-        :value="getValue('course')"
-        :options="getMapedCourses()"
-        @input="event => setValue(event, 'course')"
+        :value="object.course"
+        :options="courses"
+        @input="value => setValue(value, 'course')"
       />
-    </ContentRow>
+    </RowWithLabel>
 
-    <ContentRow custom-key="group">
-      <CustomLabel>Группа</CustomLabel>
+    <RowWithLabel label="Группа">
       <CustomInput
-        :value="getValue('group')"
-        @input="event => setValue(event, 'group')"
+        :value="object.group"
+        @input="value => setValue(value, 'group')"
       />
-    </ContentRow>
+    </RowWithLabel>
   </Modal>
 </template>
 
@@ -65,8 +61,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      faculties: "facultyModule/faculties",
-      specialities: "specialityModule/specialities",
+      faculties: "facultyModule/mapedFaculties",
+      specialities: "specialityModule/mapedSpecialities",
       courses: "courseModule/courses"
     })
   },
@@ -76,24 +72,9 @@ export default {
       immediate: true,
       handler(value) {
         this.object = _.cloneDeep(value);
-      }
-    },
 
-    faculties: {
-      immediate: true,
-      handler(collection) {
-        _.forEach(collection, object=> {
-          delete object.curriculums;
-        });
-      }
-    },
-
-    specialities: {
-      immediate: true,
-      handler(collection) {
-        _.forEach(collection, object=> {
-          delete object.curriculums;
-        });
+        delete this.object.faculty;
+        delete this.object.speciality;
       }
     }
   },
@@ -113,16 +94,12 @@ export default {
       updateCurriculum: "curriculumModule/updateCurriculum"
     }),
 
-    getMapedCourses() {
-      return _.map(this.courses, "course");
+    getValue(property) {
+      return _.isObject(this.object[property]) ? _.get(this.object, `${property}.${property}`) : _.get(this.object, property);
     },
 
-    getValue(property, isId = false) {
-      return isId ? _.get(this.object, `${property}.${property}`) : _.get(this.object, property);
-    },
-
-    setValue(event, property) {
-      _.set(this.object, property, event.target.value);
+    setValue(value, property) {
+      _.set(this.object, property, value);
     },
 
     saveCurriculumData() {

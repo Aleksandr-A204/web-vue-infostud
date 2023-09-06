@@ -4,38 +4,35 @@
     @close="$emit('close')"
     @saveData="saveData"
   >
-    <ContentRow custom-key="city">
-      <CustomLabel>Город</CustomLabel>
+    <RowWithLabel label="Город">
       <CustomSelect
-        :value="getValue('city')"
         :options="cities"
-        property="city"
-        :is-id="true"
-        @input="event => setValue(event, 'cityId')"
+        track-by="value"
+        label="display"
+        :value="object.cityId"
+        @input="value => setValue(value, 'cityId')"
       />
-    </ContentRow>
+    </RowWithLabel>
 
-    <ContentRow custom-key="street">
-      <CustomLabel>Улица</CustomLabel>
+    <RowWithLabel label="Улица">
       <CustomSelect
-        :value="getValue('street')"
         :options="streets"
-        property="street"
-        :is-id="true"
+        track-by="value"
+        label="display"
+        :value="object.streetId"
         @input="event => setValue(event, 'streetId')"
       />
-    </ContentRow>
+    </RowWithLabel>
 
-    <ContentRow custom-key="postindex">
-      <CustomLabel>Почтовый индекс</CustomLabel>
+    <RowWithLabel label="Почтовый индекс">
       <CustomSelect
-        :value="getValue('postindex')"
         :options="postindexes"
-        property="postindex"
-        :is-id="true"
+        track-by="value"
+        label="display"
+        :value="object.postindexId"
         @input="event => setValue(event, 'postindexId')"
       />
-    </ContentRow>
+    </RowWithLabel>
   </Modal>
 </template>
 
@@ -51,11 +48,17 @@ export default {
     }
   },
 
+  data() {
+    return {
+      object: null
+    };
+  },
+
   computed: {
     ...mapGetters({
-      streets: "streetModule/streets",
-      cities: "cityModule/cities",
-      postindexes: "postindexModule/postindexes"
+      streets: "streetModule/mapedStreets",
+      cities: "cityModule/mapedCities",
+      postindexes: "postindexModule/mapedPostindexes"
     })
   },
 
@@ -64,24 +67,10 @@ export default {
       immediate: true,
       handler(value) {
         this.object = _.cloneDeep(value);
-      }
-    },
 
-    faculties: {
-      immediate: true,
-      handler(collection) {
-        _.forEach(collection, object=> {
-          delete object.curriculums;
-        });
-      }
-    },
-
-    specialities: {
-      immediate: true,
-      handler(collection) {
-        _.forEach(collection, object=> {
-          delete object.curriculums;
-        });
+        delete this.object.city;
+        delete this.object.street;
+        delete this.object.postindex;
       }
     }
   },
@@ -101,32 +90,8 @@ export default {
       editeAddress: "addressModule/editeAddress"
     }),
 
-    getValue(property) {
-      return _.get(this.object, `${property}.${property}`);
-    },
-
-    setValue(event, property) {
-      _.set(this.object, property, event.target.value);
-    },
-
-    getOptions(property) {
-      switch (property) {
-      case "city.city":
-        _.forEach(this.cities, object => {
-          delete object.addresses;
-        });
-        return this.cities;
-      case "street.street":
-        _.forEach(this.streets, object => {
-          delete object.addresses;
-        });
-        return this.streets;
-      case "postindex.postindex":
-        _.forEach(this.postindexes, object => {
-          delete object.addresses;
-        });
-        return this.postindexes;
-      }
+    setValue(value, property) {
+      _.set(this.object, property, value);
     },
 
     saveData() {

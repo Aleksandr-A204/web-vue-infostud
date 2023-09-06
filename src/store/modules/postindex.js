@@ -1,5 +1,7 @@
 import PostindexClient from "@/API/postindexClient.js";
 
+import _ from "lodash";
+
 const postindexClient = new PostindexClient();
 
 export default {
@@ -27,6 +29,13 @@ export default {
   getters: {
     postindexes(state) {
       return state.postindexes;
+    },
+
+    mapedPostindexes(state) {
+      return _.map(state.postindexes, postindex => ({
+        display: postindex.postindex,
+        value: postindex.id
+      }));
     }
   }
 };

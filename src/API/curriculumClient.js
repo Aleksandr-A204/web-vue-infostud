@@ -18,10 +18,12 @@ class CurriculumClient {
     alert(responce.data);
   }
 
-  async getCurriculums(keywordSearch = "") {
+  async getCurriculums(keywordSearch = "", column) {
     const responce = await axios.get(`${API_URL}/curriculum`, {
       params: {
-        keywordSearch: keywordSearch
+        keywordSearch: keywordSearch,
+        sortProperty: column?.property,
+        sortType: column?.sort
       }
     });
 

@@ -2,7 +2,7 @@
   <div>
     <Search
       :value="getKeywordSearch"
-      @input="setKeywordSearch"
+      @input="value => $store.dispatch('addressModule/keywordSearch', value)"
     />
 
     <CustomButton @click="addAddress()">
@@ -15,13 +15,15 @@
       @columnClick="columnClick"
     >
       <template #actions="{element}">
-        <CustomButton @click="editAddress(element)">
-          <Icon icon="pen-to-square" />
-        </CustomButton>
+        <CustomButton
+          icon="pen-to-square"
+          @click="editAddress(element)"
+        />
 
-        <CustomButton @click="confirmDeleteAddress(element.id)">
-          <Icon icon="trash" />
-        </CustomButton>
+        <CustomButton
+          icon="trash"
+          @click="confirmDeleteAddress(element.id)"
+        />
       </template>
     </CustomTable>
 
@@ -49,19 +51,16 @@ export default {
         {
           label: "Город",
           property: "city.city",
-          propertyById: "cityId",
           sort: "None"
         },
         {
           label: "Почтовый индекс",
           property: "postindex.postindex",
-          propertyById: "postindexId",
           sort: "None"
         },
         {
           label: "Улица",
           property: "street.street",
-          propertyById: "streetId",
           sort: "None"
         },
         {
@@ -89,9 +88,9 @@ export default {
 
     addAddress() {
       this.selectedAddress = {
-        city: null,
-        street: null,
-        postindex: null
+        cityId: null,
+        streetId: null,
+        postindexId: null
       };
 
       this.showModal = true;
@@ -129,10 +128,6 @@ export default {
       this.selectedAddress = address;
 
       this.showModal = true;
-    },
-
-    setKeywordSearch(value) {
-      this.$store.dispatch("addressModule/keywordSearch", value);
     }
   }
 };

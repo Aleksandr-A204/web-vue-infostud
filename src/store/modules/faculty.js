@@ -1,5 +1,7 @@
 import FacultyClient from "@/API/facultyClient.js";
 
+import _ from "lodash";
+
 const facultyClient = new FacultyClient();
 
 export default {
@@ -11,7 +13,7 @@ export default {
   },
 
   mutations: {
-    updateFacultyData(state, allFaculties) {
+    setFacultyData(state, allFaculties) {
       state.faculties = allFaculties;
     }
   },
@@ -20,13 +22,20 @@ export default {
     async getFacultyData({ commit }) {
       const faculties = await facultyClient.getFacultyData();
 
-      commit("updateFacultyData", faculties);
+      commit("setFacultyData", faculties);
     }
   },
 
   getters: {
     faculties(state) {
       return state.faculties;
+    },
+
+    mapedFaculties(state) {
+      return _.map(state.faculties, faculty => ({
+        display: faculty.faculty,
+        value: faculty.id
+      }));
     }
   }
 };

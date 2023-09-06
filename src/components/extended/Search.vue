@@ -3,7 +3,7 @@
     :value="value"
     class="input-filter"
     placeholder="Поиск..."
-    @input="setValue"
+    @input="event => $emit('input', event.target.value)"
   >
 </template>
 
@@ -13,12 +13,6 @@ export default {
     value: {
       type: String,
       default: ""
-    }
-  },
-
-  methods: {
-    setValue(event) {
-      this.$emit("input", event.target.value);
     }
   }
 };
