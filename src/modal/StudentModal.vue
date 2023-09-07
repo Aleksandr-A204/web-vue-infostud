@@ -14,9 +14,9 @@
     <RowWithLabel label="Город">
       <CustomSelect
         :options="cities"
-        track-by="value"
-        label="display"
         :value="object.cityId"
+        label="display"
+        track-by="value"
         @input="value => setValue(value, 'cityId')"
       />
     </RowWithLabel>
@@ -231,9 +231,9 @@ export default {
     },
 
     setValue(value, property) {
-      this.changeObject(property);
-
       _.set(this.object, property, value);
+
+      this.changeObject(property);
     },
 
     saveSudentData() {
